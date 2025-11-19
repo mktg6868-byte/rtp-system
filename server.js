@@ -1,8 +1,6 @@
-// server.js
 const express = require('express');
 const path = require('path');
 const fs = require('fs');
-const crypto = require('crypto');
 const helmet = require('helmet');
 const rateLimit = require('express-rate-limit');
 const { allowedOrigins, embedToken } = require('./config');
@@ -11,101 +9,71 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 
 // Security headers
-app.use(helmet({
-  contentSecurityPolicy: false // we’ll add our own CSP header below
-}));
+app.use(
+  helmet({
+    contentSecurityPolicy: false
+  })
+);
 
-// Basic JSON body parsing (if needed later)
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
-
-// Simple request logger (optional)
-app.use((req, res, next) => {
-  console.log(`[${new Date().toISOString()}] ${req.method} ${req.originalUrl} - IP: ${req.ip}`);
-  next();
-});
-
-// Serve static files (HTML/CSS/JS)
-app.use('/public', express.static(path.join(__dirname, 'public'), {
-  maxAge: '1h',
-  etag: true
-}));
-
-// Anti-abuse rate limiter for API
-const apiLimiter = rateLimit({
-  windowMs: 60 * 1000, // 1 minute
-  max: 60,             // 60 requests per minute per IP
-  standardHeaders: true,
-  legacyHeaders: false
-});
-
-// Helper: check if request comes from your domains (Origin / Referer)
-function isAllowedOrigin(req) {
-  const origin = req.headers.origin || '';
-  const referer = req.headers.referer || '';
-
-  return allowedOrigins.some(domain =>
-    origin.startsWith(domain) || referer.startsWith(domain)
-  );
+// CORS validator
+function isAllowed(req) {
+  const o = req.headers.origin || '';
+  const r = req.headers.referer || '';
+  return allowedOrigins.some((d) => o.startsWith(d) || r.startsWith(d));
 }
 
-// CSP + frame-ancestors to only allow your casinos to embed
+// Static files
+app.use('/public', express.static(path.join(__dirname, 'public')));
+
+// Manual CSP (IMPORTANT)
 app.use((req, res, next) => {
-  const frameAncestors = "https://i88sg.com https://wegobet.asia";
   res.setHeader(
     'Content-Security-Policy',
     "frame-ancestors https://i88sg.com https://wegobet.asia; default-src 'self' https:; img-src * data:; style-src 'self' 'unsafe-inline' https:; script-src 'self' https: 'unsafe-inline';"
   );
-
-
-// Serve the iframe page with optional token validation
-app.get('/embed/game-rtp.html', (req, res) => {
-  const token = req.query.t;
-
-  // simple token check (optional but recommended)
-  if (embedToken && token !== embedToken) {
-    return res.status(403).send('Forbidden');
-  }
-
-  // additionally, allow only your domains to embed
-  if (!isAllowedOrigin(req)) {
-    console.warn('Blocked embed from origin/referrer:', req.headers.origin, req.headers.referer);
-    return res.status(403).send('Forbidden');
-  }
-
-  res.sendFile(path.join(__dirname, 'public', 'embed', 'game-rtp.html'));
+  next();
 });
 
-// RTP API – returns JSON data
+// Embed HTML
+app.get('/embed/game-rtp.html', (req, res) => {
+  if (req.query.t !== embedToken) {
+    return res.status(403).send('Forbidden');
+  }
+  if (!isAllowed(req)) {
+    return res.status(403).send('Forbidden');
+  }
+
+  res.sendFile(path.join(__dirname, 'public/embed/game-rtp.html'));
+});
+
+// API rate limit
+const apiLimiter = rateLimit({
+  windowMs: 60000,
+  max: 60
+});
+
+// RTP API
 app.post('/api/rtp', apiLimiter, (req, res) => {
-  if (!isAllowedOrigin(req)) {
-    console.warn('Blocked API from origin/referrer:', req.headers.origin, req.headers.referer);
-    return res.status(403).json({ status: 'error', data: { message: 'Forbidden' } });
+  if (!isAllowed(req)) {
+    return res.status(403).json({ status: 'error', message: 'Origin blocked' });
   }
 
   try {
-    const jsonPath = path.join(__dirname, 'data', 'rtp-data.json');
-    const raw = fs.readFileSync(jsonPath, 'utf-8');
-    const rtpData = JSON.parse(raw);
+    const raw = fs.readFileSync(path.join(__dirname, 'data/rtp-data.json'), 'utf8');
+    const data = JSON.parse(raw);
 
-    const now = Math.floor(Date.now() / 1000);
-
-    return res.json({
+    res.json({
       status: 'success',
-      timestamp: now,
-      data: rtpData
+      timestamp: Math.floor(Date.now() / 1000),
+      data
     });
-  } catch (err) {
-    console.error('Error reading RTP data:', err);
-    return res.status(500).json({
-      status: 'error',
-      data: { message: 'Internal server error' }
-    });
+  } catch (e) {
+    console.error(e);
+    res.status(500).json({ status: 'error', message: 'Failed to load data' });
   }
 });
 
+// Start server
 app.listen(PORT, () => {
-  console.log(`RTP server running on http://localhost:${PORT}`);
+  console.log(`RTP server running on port ${PORT}`);
 });
-
-
