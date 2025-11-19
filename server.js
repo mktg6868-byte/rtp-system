@@ -17,6 +17,27 @@ app.use(
   })
 );
 
+// ⬇⬇ ADD CORS FIX HERE
+app.use((req, res, next) => {
+  const origin = req.headers.origin || "";
+  const allowed = [
+    "https://i88sg.com",
+    "https://wegobet.asia"
+  ];
+
+  if (allowed.includes(origin)) {
+    res.setHeader("Access-Control-Allow-Origin", origin);
+    res.setHeader("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
+    res.setHeader("Access-Control-Allow-Headers", "Content-Type");
+  }
+
+  if (req.method === "OPTIONS") {
+    return res.sendStatus(200);
+  }
+
+  next();
+});
+
 // CORS validator
 function isAllowed(req) {
   const origin = req.headers.origin || '';
@@ -89,5 +110,6 @@ app.post('/api/rtp', apiLimiter, (req, res) => {
 app.listen(PORT, () => {
   console.log(`RTP server running on port ${PORT}`);
 });
+
 
 
