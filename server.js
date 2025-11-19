@@ -51,7 +51,7 @@ function isAllowedOrigin(req) {
 
 // CSP + frame-ancestors to only allow your casinos to embed
 app.use((req, res, next) => {
-  const frameAncestors = allowedOrigins.join(' ');
+  const frameAncestors = "https://i88sg.com https://wegobet.asia";
   res.setHeader(
     'Content-Security-Policy',
     `frame-ancestors ${frameAncestors}; default-src 'self' https:; img-src * data:; style-src 'self' 'unsafe-inline' https:; script-src 'self' https: 'unsafe-inline';`
@@ -108,3 +108,4 @@ app.post('/api/rtp', apiLimiter, (req, res) => {
 app.listen(PORT, () => {
   console.log(`RTP server running on http://localhost:${PORT}`);
 });
+
