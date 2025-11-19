@@ -6,7 +6,9 @@ const rateLimit = require('express-rate-limit');
 const { allowedOrigins, embedToken } = require('./config');
 
 const app = express();
+app.set('trust proxy', 1); // FIX for Render
 const PORT = process.env.PORT || 3000;
+
 
 // Security headers
 app.use(
@@ -77,3 +79,4 @@ app.post('/api/rtp', apiLimiter, (req, res) => {
 app.listen(PORT, () => {
   console.log(`RTP server running on port ${PORT}`);
 });
+
