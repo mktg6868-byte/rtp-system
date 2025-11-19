@@ -1,0 +1,240 @@
+:root {
+  --rtp-text-color: #ffffff;
+  --rtp-base-color: #0f172a;
+  --rtp-outline-color: #facc15;
+  --rtp-button-text: #111827;
+  --rtp-button-bg: #facc15;
+  --rtp-progress-bg: #020617;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  background: radial-gradient(circle at top, #1e293b 0, #020617 60%);
+  color: var(--rtp-text-color);
+}
+
+.rtp-wrapper {
+  padding: 12px;
+}
+
+.rtp-header {
+  display: grid;
+  grid-template-columns: 100px 1fr;
+  gap: 12px;
+  align-items: center;
+  background: linear-gradient(135deg, #020617, #1f2937);
+  border-radius: 12px;
+  border: 1px solid rgba(250, 204, 21, 0.4);
+  padding: 10px;
+  margin-bottom: 12px;
+}
+
+.rtp-header-img {
+  width: 100%;
+  border-radius: 10px;
+  object-fit: cover;
+}
+
+.rtp-header-text h1 {
+  margin: 0;
+  font-size: 1.1rem;
+}
+
+.rtp-header-text p {
+  margin: 3px 0 6px;
+  font-size: 0.8rem;
+  opacity: 0.8;
+}
+
+.rtp-refresh {
+  font-size: 0.75rem;
+}
+
+.rtp-progress-outer {
+  margin-top: 4px;
+  width: 100%;
+  height: 6px;
+  background: rgba(15, 23, 42, 0.8);
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.rtp-progress-inner {
+  height: 100%;
+  width: 0%;
+  background: linear-gradient(90deg, #22c55e, #eab308, #ef4444);
+  transition: width 0.5s linear;
+}
+
+/* Provider nav */
+.rtp-provider-nav {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 8px;
+}
+
+.nav-arrow {
+  border-radius: 999px;
+  border: 1px solid rgba(148, 163, 184, 0.7);
+  padding: 4px 8px;
+  background: rgba(15, 23, 42, 0.8);
+  color: #e5e7eb;
+  cursor: pointer;
+  font-size: 0.7rem;
+}
+
+.nav-scroll {
+  flex: 1;
+  display: flex;
+  gap: 6px;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.nav-scroll::-webkit-scrollbar {
+  display: none;
+}
+
+.nav-item {
+  white-space: nowrap;
+  padding: 6px 10px;
+  font-size: 0.75rem;
+  border-radius: 999px;
+  border: 1px solid transparent;
+  background: rgba(15, 23, 42, 0.7);
+  color: #e5e7eb;
+  cursor: pointer;
+  transition: background 0.15s, transform 0.1s, border-color 0.15s;
+}
+
+.nav-item:hover {
+  transform: translateY(-1px);
+  border-color: rgba(250, 204, 21, 0.7);
+}
+
+.nav-item.category-select {
+  background: linear-gradient(135deg, var(--rtp-button-bg), #f97316);
+  color: var(--rtp-button-text);
+}
+
+/* Provider info & pagination */
+.rtp-provider-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 6px;
+}
+
+.providerName {
+  font-size: 0.9rem;
+  margin: 0;
+}
+
+.rtp-pagination {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.75rem;
+}
+
+.page-btn {
+  border-radius: 999px;
+  border: 1px solid rgba(148, 163, 184, 0.6);
+  background: rgba(15, 23, 42, 0.9);
+  color: #e5e7eb;
+  font-size: 0.7rem;
+  padding: 2px 8px;
+  cursor: pointer;
+}
+
+/* Game grid */
+.rtp-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+  gap: 8px;
+}
+
+.game-card {
+  background: rgba(15, 23, 42, 0.95);
+  border-radius: 10px;
+  padding: 6px;
+  border: 1px solid rgba(30, 64, 175, 0.6);
+  box-shadow: 0 4px 10px rgba(15, 23, 42, 0.7);
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 0.75rem;
+}
+
+.game-image {
+  width: 100%;
+  border-radius: 8px;
+  max-height: 90px;
+  object-fit: cover;
+}
+
+.game-title {
+  font-weight: 600;
+  font-size: 0.75rem;
+  line-height: 1.1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.game-subtitle {
+  font-size: 0.7rem;
+}
+
+.progress-container {
+  width: 100%;
+  height: 12px;
+  background: rgba(15, 23, 42, 0.9);
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.progress-bar {
+  height: 100%;
+  text-align: center;
+  font-size: 0.65rem;
+  line-height: 12px;
+  color: #0b1120;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.rtp-bar-red {
+  background: linear-gradient(90deg, #ef4444, #b91c1c);
+  color: #fee2e2;
+}
+
+.rtp-bar-orange {
+  background: linear-gradient(90deg, #f97316, #ea580c);
+  color: #fffbeb;
+}
+
+.rtp-bar-blue {
+  background: linear-gradient(90deg, #3b82f6, #1d4ed8);
+  color: #eff6ff;
+}
+
+.rtp-bar-green {
+  background: linear-gradient(90deg, #22c55e, #16a34a);
+  color: #ecfdf3;
+}
+
+/* States */
+.rtp-no-data,
+.rtp-error {
+  text-align: center;
+  padding: 20px 0;
+  font-size: 0.8rem;
+  opacity: 0.8;
+}
