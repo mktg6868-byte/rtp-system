@@ -3,62 +3,65 @@ const path = require('path');
 const fs = require('fs');
 const helmet = require('helmet');
 const rateLimit = require('express-rate-limit');
-const { allowedOrigins, embedToken } = require('./config');
+const { embedToken } = require('./config'); // we won't rely on allowedOrigins from config for now
 
 const app = express();
-app.set('trust proxy', 1); // FIX for Render
+app.set('trust proxy', 1); // required for Render
+
 const PORT = process.env.PORT || 3000;
 
+// Hard-coded allowed origins (iframe parents + self for testing)
+const ALLOWED_ORIGINS = [
+  'https://i88sg.com',
+  'https://wegobet.asia',
+  'https://rtp-system.onrender.com'
+];
 
-// Security headers
+// Security headers via helmet (CSP handled manually)
 app.use(
   helmet({
     contentSecurityPolicy: false
   })
 );
 
-// ⬇⬇ ADD CORS FIX HERE
+// CORS + preflight handling
 app.use((req, res, next) => {
-  const origin = req.headers.origin || "";
-  const allowed = [
-    "https://i88sg.com",
-    "https://wegobet.asia"
-  ];
+  const origin = req.headers.origin || '';
 
-  if (allowed.includes(origin)) {
-    res.setHeader("Access-Control-Allow-Origin", origin);
-    res.setHeader("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
-    res.setHeader("Access-Control-Allow-Headers", "Content-Type");
+  if (ALLOWED_ORIGINS.includes(origin)) {
+    res.setHeader('Access-Control-Allow-Origin', origin);
+    res.setHeader('Vary', 'Origin'); // ensure caches respect per-origin headers
+    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
   }
 
-  if (req.method === "OPTIONS") {
+  if (req.method === 'OPTIONS') {
     return res.sendStatus(200);
   }
 
   next();
 });
 
-// CORS validator
+// CORS validator for API & embed
 function isAllowed(req) {
   const origin = req.headers.origin || '';
   const referer = req.headers.referer || '';
 
-  if (
-    origin.startsWith("https://i88sg.com") ||
-    origin.startsWith("https://wegobet.asia") ||
-    referer.startsWith("https://i88sg.com") ||
-    referer.startsWith("https://wegobet.asia")
-  ) {
+  // Allow server-to-server / curl with no origin & referer
+  if (!origin && !referer) {
     return true;
   }
 
-  return false;
+  // Allow if origin or referer matches any allowed origin
+  return ALLOWED_ORIGINS.some(
+    (d) => (origin && origin.startsWith(d)) || (referer && referer.startsWith(d))
+  );
 }
 
 // Static files
 app.use('/public', express.static(path.join(__dirname, 'public')));
 
-// Manual CSP (IMPORTANT)
+// Manual CSP (only control who can FRAME the RTP page)
 app.use((req, res, next) => {
   res.setHeader(
     'Content-Security-Policy',
@@ -72,6 +75,7 @@ app.get('/embed/game-rtp.html', (req, res) => {
   if (req.query.t !== embedToken) {
     return res.status(403).send('Forbidden');
   }
+
   if (!isAllowed(req)) {
     return res.status(403).send('Forbidden');
   }
@@ -81,7 +85,7 @@ app.get('/embed/game-rtp.html', (req, res) => {
 
 // API rate limit
 const apiLimiter = rateLimit({
-  windowMs: 60000,
+  windowMs: 60 * 1000,
   max: 60
 });
 
@@ -110,6 +114,3 @@ app.post('/api/rtp', apiLimiter, (req, res) => {
 app.listen(PORT, () => {
   console.log(`RTP server running on port ${PORT}`);
 });
-
-
-
