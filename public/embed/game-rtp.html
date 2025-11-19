@@ -1,0 +1,37 @@
+
+  <div class="rtp-wrapper">
+    <header class="rtp-header">
+      <img id="headingImg" class="rtp-header-img" src="" alt="RTP Header">
+      <div class="rtp-header-text">
+        <h1>Game RTP Monitor</h1>
+        <p>Live RTP statistics by provider</p>
+        <div class="rtp-refresh">
+          <span>Auto refresh in: <strong id="refreshTime">--</strong></span>
+          <div class="rtp-progress-outer">
+            <div id="countdownBar" class="rtp-progress-inner"></div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <nav class="rtp-provider-nav">
+      <button class="nav-arrow left-btn">&lt;</button>
+      <div id="providerCategory" class="nav-scroll"></div>
+      <button class="nav-arrow right-btn">&gt;</button>
+    </nav>
+
+    <section class="rtp-provider-info">
+      <h2 class="providerName">Select a provider</h2>
+      <div class="rtp-pagination">
+        <button id="prevPage" class="page-btn">Prev</button>
+        <span id="paginationInfo">Page 1 / 1</span>
+        <button id="nextPage" class="page-btn">Next</button>
+      </div>
+    </section>
+
+    <main id="gameRTP" class="rtp-grid">
+      <!-- game cards injected here -->
+    </main>
+  </div>
+
+  <script src="/public/embed/rtp.js"></script>
