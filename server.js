@@ -19,9 +19,19 @@ app.use(
 
 // CORS validator
 function isAllowed(req) {
-  const o = req.headers.origin || '';
-  const r = req.headers.referer || '';
-  return allowedOrigins.some((d) => o.startsWith(d) || r.startsWith(d));
+  const origin = req.headers.origin || '';
+  const referer = req.headers.referer || '';
+
+  if (
+    origin.startsWith("https://i88sg.com") ||
+    origin.startsWith("https://wegobet.asia") ||
+    referer.startsWith("https://i88sg.com") ||
+    referer.startsWith("https://wegobet.asia")
+  ) {
+    return true;
+  }
+
+  return false;
 }
 
 // Static files
@@ -79,4 +89,5 @@ app.post('/api/rtp', apiLimiter, (req, res) => {
 app.listen(PORT, () => {
   console.log(`RTP server running on port ${PORT}`);
 });
+
 
