@@ -54,10 +54,9 @@ app.use((req, res, next) => {
   const frameAncestors = "https://i88sg.com https://wegobet.asia";
   res.setHeader(
     'Content-Security-Policy',
-    `frame-ancestors ${frameAncestors}; default-src 'self' https:; img-src * data:; style-src 'self' 'unsafe-inline' https:; script-src 'self' https: 'unsafe-inline';`
+    "frame-ancestors https://i88sg.com https://wegobet.asia; default-src 'self' https:; img-src * data:; style-src 'self' 'unsafe-inline' https:; script-src 'self' https: 'unsafe-inline';"
   );
-  next();
-});
+
 
 // Serve the iframe page with optional token validation
 app.get('/embed/game-rtp.html', (req, res) => {
@@ -108,4 +107,5 @@ app.post('/api/rtp', apiLimiter, (req, res) => {
 app.listen(PORT, () => {
   console.log(`RTP server running on http://localhost:${PORT}`);
 });
+
 
