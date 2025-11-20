@@ -3,9 +3,9 @@ module.exports = {
     {
       baseOrigin: "https://wegobet.asia",
 
-      apiBase: "https://YOUR-CASINO-DOMAIN.com",   // EDIT THIS
-      accessId: "YOUR_ID",                         // EDIT THIS
-      accessToken: "YOUR_TOKEN",                   // EDIT THIS
+      apiBase: "https://wegobet.asia",   // EDIT THIS
+      accessId: "20050695",                         // EDIT THIS
+      accessToken: "c574d3c7b814b2efa4e62d179764b1864766adc8700240454d7fde1c56c3a855",                   // EDIT THIS
 
       providers: [
         { code: "PP", displayName: "Pragmatic Play", product: 0, site: "PP" },
@@ -19,3 +19,4 @@ module.exports = {
     }
   ]
 };
+
