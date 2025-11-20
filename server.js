@@ -44,6 +44,74 @@ async function getGameList(baseURL, provider = "", gameType = "") {
     }
 }
 
+app.post("/games", async (req, res) => {
+    const { baseURL } = req.body;
+
+    try {
+        // Fetch your provider API game list
+        const url = baseURL + "/api/v1/index.php";
+
+        const form = new FormData();
+        form.append("module", "/games/getGameList");
+        form.append("accessId", ACCESS_ID);
+        form.append("accessToken", ACCESS_TOKEN);
+
+        const response = await fetch(url, { method: "POST", body: form });
+        const apiData = await response.json();
+
+        const list = apiData?.data || [];
+
+        // Group games by GameType
+        const providers = {};
+
+        list.forEach((g) => {
+            const provider = g.GameType || "UNKNOWN";
+
+            if (!providers[provider]) {
+                providers[provider] = {
+                    displayName: provider,
+                    data: []
+                };
+            }
+
+            // Assign Random RTP 40–96
+            const randomRTP = Math.floor(Math.random() * (96 - 40 + 1)) + 40;
+
+            providers[provider].data.push({
+                gamertpid: g.GameCode,
+                gamertpnum: randomRTP,
+                gamertpdata: {
+                    gameName: g.GameName,
+                    gameImgURL: g.GameImageUrl,
+                    gameCode: g.GameCode
+                }
+            });
+        });
+
+        res.json({
+            status: "success",
+            timestamp: Date.now(),
+            data: {
+                autoRTPminute: 10,
+                autoRTPlastTime: Math.floor(Date.now() / 1000),
+                headerImageURL: "",
+                cssStyle: {
+                    textColor: "#ffffff",
+                    baseColor: "#181d3a",
+                    outlineColor: "#444",
+                    buttonTextColor: "#ffffff",
+                    buttonBgColor: "#181d3a",
+                    progressbarBgColor: "#ffc107"
+                },
+                gameRTPData: providers
+            }
+        });
+
+    } catch (err) {
+        res.json({ status: "error", error: err.message });
+    }
+});
+
 // ====================================================================
 // ❗ EMBED PAGE (this loads inside the <iframe>)
 // ====================================================================
@@ -53,229 +121,206 @@ app.get("/embed/games", (req, res) => {
 <html>
 <head>
 <meta charset="UTF-8" />
-<title>Game List - RTP</title>
+<title>Game RTP</title>
 
 <style>
     body {
         margin: 0;
-        padding: 16px;
+        padding: 15px;
         background: #0f1217;
-        color: #fff;
+        color: white;
         font-family: Arial, sans-serif;
     }
-
-    .section-title {
-        font-size: 26px;
-        font-weight: bold;
-        margin-bottom: 16px;
-        text-align: center;
-    }
-
-    .provider-bar {
+    .nav-baryuan {
         display: flex;
         overflow-x: auto;
-        gap: 12px;
-        padding-bottom: 10px;
-        margin-bottom: 20px;
+        gap: 10px;
+        padding: 10px 0;
     }
-    .provider-btn {
-        padding: 8px 16px;
-        border-radius: 20px;
+    .nav-item {
+        padding: 8px 14px;
         background: #181d3a;
-        border: 1px solid #333;
+        border-radius: 20px;
         cursor: pointer;
         white-space: nowrap;
-        transition: 0.2s;
+        border: 1px solid #333;
     }
-    .provider-btn.active {
-        background: #ffca2c;
-        color: #000;
+    .category-select {
+        background: #ffc107;
+        color: black;
         font-weight: bold;
     }
-
-    .grid {
+    .games-grid {
         display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
-        gap: 14px;
-        margin-bottom: 30px;
+        grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+        gap: 12px;
+        margin-top: 20px;
     }
     .game-card {
         background: #161b22;
-        padding: 10px;
         border-radius: 10px;
+        padding: 10px;
         text-align: center;
-        border: 1px solid #222;
-        transition: 0.3s;
     }
-    .game-card:hover {
-        transform: scale(1.03);
-        background: #1d2330;
-    }
-    .game-img {
+    .game-card img {
         width: 100%;
         border-radius: 8px;
-        margin-bottom: 8px;
     }
-    .game-name {
-        font-size: 14px;
-        margin-bottom: 6px;
-    }
-    .rtp-badge {
-        background: #28a745;
-        color: #fff;
-        display: inline-block;
-        padding: 3px 8px;
+    .progress-container {
+        margin-top: 6px;
+        background: #222;
         border-radius: 6px;
+        overflow: hidden;
+    }
+    .progress-bar {
+        height: 18px;
+        border-radius: 6px;
+        color: #fff;
         font-size: 12px;
+        text-align: center;
+        line-height: 18px;
     }
+    .red { background: #d9534f; }
+    .orange { background: #ff9800; }
+    .blue { background: #2196f3; }
+    .green { background: #4caf50; }
 
-    .pagination {
-        display: flex;
-        justify-content: center;
-        gap: 16px;
-        margin-bottom: 20px;
-    }
-    .page-btn {
-        background: #181d3a;
-        padding: 8px 16px;
-        border-radius: 8px;
-        cursor: pointer;
-        border: 1px solid #333;
-    }
-    .page-btn:hover {
-        background: #222c55;
-    }
-
-    details {
-        background: #141820;
-        border: 1px solid #222;
-        padding: 14px;
-        border-radius: 10px;
-        margin-bottom: 12px;
-    }
 </style>
 </head>
-
 <body>
 
-<div class="section-title">🎰 Game RTP Live Tracker</div>
+<div class="nav-baryuan" id="providerCategory"></div>
 
-<div class="provider-bar" id="providerBar"></div>
+<div class="games-grid" id="gameRTP"></div>
 
-<div class="grid" id="gameGrid"></div>
-
-<div class="pagination">
-    <div class="page-btn" id="prevPage">Previous</div>
-    <div class="page-btn" id="pageInfo">Page 1</div>
-    <div class="page-btn" id="nextPage">Next</div>
+<div style="margin-top:20px; display:flex; justify-content:space-between;">
+    <button id="prevPage">Previous</button>
+    <div id="paginationInfo">Page 1</div>
+    <button id="nextPage">Next</button>
 </div>
 
-<details>
-    <summary>Disclaimer</summary>
-    <p>This data is based on bets placed on the network and does not guarantee future results.</p>
-</details>
-
 <script>
-let parentBaseURL = null;
+/* -------------------------
+   AUTO HEIGHT LIKE COMPETITOR
+--------------------------*/
+function sendHeight() {
+    const height = document.body.scrollHeight;
+    window.parent.postMessage({ type: 'setIframeHeight', height }, '*');
+}
+window.addEventListener('load', sendHeight);
+new ResizeObserver(sendHeight).observe(document.body);
 
-window.addEventListener("message", function(event) {
-    if (event.data.baseURL) {
-        parentBaseURL = event.data.baseURL;
-        loadProviders();
+/* -------------------------
+   RECEIVE BASEURL FROM PARENT
+--------------------------*/
+let parentBaseURL = null;
+window.addEventListener("message", e => {
+    if (e.data?.baseURL) {
+        parentBaseURL = e.data.baseURL;
+        loadRTP();
     }
 });
 
-// AUTO HEIGHT
-function sendHeight() {
-    window.parent.postMessage({
-        type: "setIframeHeight",
-        height: document.body.scrollHeight
-    }, "*");
-}
-setInterval(sendHeight, 500);
-
-// GAME DATA
-let allGames = [];
+/* -------------------------
+   LOAD & PROCESS GAME DATA
+--------------------------*/
+let providers = {};
 let currentProvider = "";
 let currentPage = 1;
-const pageSize = 20;
+const itemsPerPage = 60;
 
-async function loadProviders() {
+async function loadRTP() {
     const res = await fetch("/games", {
         method: "POST",
-        headers: {"Content-Type": "application/json"},
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ baseURL: parentBaseURL })
     });
 
-    const data = await res.json();
+    const json = await res.json();
+    providers = json.data.gameRTPData;
 
-    if (!data?.data?.games) {
-        document.getElementById("gameGrid").innerHTML = "<p>No games found.</p>";
-        return;
-    }
-
-    allGames = data.data.games;
-
-    const providers = [...new Set(allGames.map(g => g.provider || "Unknown"))];
-
-    const providerBar = document.getElementById("providerBar");
-    providerBar.innerHTML = providers.map(p => 
-        \`<div class="provider-btn" data-provider="\${p}">\${p}</div>\`
-    ).join("");
-
-    document.querySelectorAll(".provider-btn").forEach(btn =>
-        btn.addEventListener("click", () => {
-            currentProvider = btn.dataset.provider;
-            currentPage = 1;
-            document.querySelectorAll(".provider-btn").forEach(b => b.classList.remove("active"));
-            btn.classList.add("active");
-            displayGames();
-        })
-    );
-
-    displayGames();
+    buildProviderNav();
 }
 
-function displayGames() {
-    const grid = document.getElementById("gameGrid");
+function buildProviderNav() {
+    const holder = document.getElementById("providerCategory");
+    holder.innerHTML = "";
 
-    let filtered = currentProvider
-        ? allGames.filter(g => g.provider === currentProvider)
-        : allGames;
+    Object.keys(providers).forEach(p => {
+        const btn = document.createElement("div");
+        btn.className = "nav-item";
+        btn.dataset.provider = p;
+        btn.innerText = providers[p].displayName;
+        btn.onclick = () => selectProvider(p, btn);
+        holder.appendChild(btn);
+    });
 
-    const start = (currentPage - 1) * pageSize;
-    const pageItems = filtered.slice(start, start + pageSize);
+    // Auto-select first provider
+    const first = document.querySelector(".nav-item");
+    if (first) first.click();
+}
 
-    grid.innerHTML = pageItems.map(g => 
-        \`
-        <div class="game-card">
-            <img src="\${g.img || ''}" class="game-img">
-            <div class="game-name">\${g.name}</div>
-            <div class="rtp-badge">RTP: \${g.rtp || 'N/A'}%</div>
-        </div>\`
-    ).join("");
+function selectProvider(provider, btn) {
+    document.querySelectorAll(".nav-item").forEach(el =>
+        el.classList.remove("category-select")
+    );
+    btn.classList.add("category-select");
 
-    document.getElementById("pageInfo").innerText = "Page " + currentPage;
+    currentProvider = provider;
+    currentPage = 1;
+    renderGames();
+}
+
+function renderGames() {
+    const container = document.getElementById("gameRTP");
+    container.innerHTML = "";
+
+    const list = providers[currentProvider].data;
+
+    const start = (currentPage - 1) * itemsPerPage;
+    const end = start + itemsPerPage;
+    const subset = list.slice(start, end);
+
+    subset.forEach(g => {
+        const rtp = g.gamertpnum;
+        let color =
+            rtp <= 40 ? "red" :
+            rtp <= 50 ? "orange" :
+            rtp <= 65 ? "blue" : "green";
+
+        container.innerHTML += \`
+            <div class="game-card">
+                <img src="\${g.gamertpdata.gameImgURL}" onerror="this.src='https://dummyimage.com/300x300/111/fff&text=No+Image';">
+                <div style="margin-top:6px;">\${g.gamertpdata.gameName}</div>
+                <div class="progress-container">
+                    <div class="progress-bar \${color}" style="width: \${rtp}%;">
+                        \${rtp}%
+                    </div>
+                </div>
+            </div>
+        \`;
+    });
+
+    document.getElementById("paginationInfo").innerText =
+        "Page " + currentPage;
 
     sendHeight();
 }
 
 document.getElementById("prevPage").onclick = () => {
-    if (currentPage > 1) {
-        currentPage--;
-        displayGames();
-    }
+    if (currentPage > 1) { currentPage--; renderGames(); }
 };
 document.getElementById("nextPage").onclick = () => {
-    currentPage++;
-    displayGames();
+    currentPage++; renderGames();
 };
+
 </script>
 
 </body>
 </html>
     `);
 });
+
 
 // ====================================================================
 // API endpoint the iframe uses
@@ -297,6 +342,7 @@ app.post("/games", async (req, res) => {
 // ====================================================================
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => console.log("Server running on port " + PORT));
+
 
 
 
