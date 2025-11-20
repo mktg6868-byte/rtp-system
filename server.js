@@ -61,6 +61,7 @@ app.get("/embed/games", (req, res) => {
 </style>
 </head>
 <body>
+
 <h2>Game List</h2>
 <div id="games" class="loading">Waiting for parent website...</div>
 
@@ -85,9 +86,9 @@ async function loadGames() {
     });
 
     const data = await res.json();
-
     if (!data?.data?.games) {
         document.getElementById("games").innerHTML = "No games found.";
+        sendHeight();
         return;
     }
 
@@ -99,13 +100,29 @@ async function loadGames() {
     });
 
     document.getElementById("games").innerHTML = html;
+
+    sendHeight();
 }
+
+// ===== AUTO RESIZE LOGIC (same as competitor) =====
+function sendHeight() {
+    const height = document.body.scrollHeight;
+    window.parent.postMessage(
+        { type: 'setIframeHeight', height: height },
+        '*'
+    );
+}
+
+window.addEventListener("load", sendHeight);
+window.addEventListener("resize", sendHeight);
+setInterval(sendHeight, 500); // keep updating
 </script>
 
 </body>
 </html>
     `);
 });
+
 
 // ====================================================================
 // API endpoint the iframe uses
@@ -127,4 +144,5 @@ app.post("/games", async (req, res) => {
 // ====================================================================
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => console.log("Server running on port " + PORT));
+
 
