@@ -1,67 +1,26 @@
-const params = new URLSearchParams(window.location.search);
-const BASE = params.get("base");
+async function loadRTP() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const base = urlParams.get("base");
 
-async function load() {
-    const res = await fetch(`/api/rtp?base=${encodeURIComponent(BASE)}`);
+    const res = await fetch(`/api/rtp?base=${base}`);
     const json = await res.json();
 
-    if (json.status !== "success") {
-        document.getElementById("app").innerHTML = "Error loading RTP";
-        return;
-    }
+    const box = document.getElementById("rtp-container");
+    box.innerHTML = "";
 
-    render(json.data);
-}
-
-function render(data) {
-    const groups = {};
-
-    data.games.forEach(g => {
-        if (!groups[g.providerCode]) groups[g.providerCode] = [];
-        groups[g.providerCode].push(g);
-    });
-
-    const app = document.getElementById("app");
-    app.innerHTML = "";
-
-    for (const p of data.providers) {
+    json.providers.forEach(g => {
         const div = document.createElement("div");
-        div.className = "provider";
-        div.innerText = p.displayName;
-        app.appendChild(div);
+        div.className = "game-card";
 
-        const games = groups[p.code] || [];
+        div.innerHTML = `
+            <img src="${g.thumb}">
+            <div>${g.name}</div>
+            <div class="rtp">${g.rtp}% RTP</div>
+        `;
 
-        games.forEach(g => {
-            const row = document.createElement("div");
-            row.className = "game";
-
-            const th = document.createElement("div");
-            th.className = "thumb";
-            if (g.thumb) {
-                th.style.backgroundImage = `url('${g.thumb}')`;
-            }
-            row.appendChild(th);
-
-            const name = document.createElement("div");
-            name.innerText = g.name;
-            row.appendChild(name);
-
-            const r = document.createElement("div");
-            r.className = "rtp";
-            r.innerText = g.rtp ? g.rtp + "%" : "--";
-            row.appendChild(r);
-
-            app.appendChild(row);
-        });
-    }
-
-    // Auto adjust iframe height
-    window.parent.postMessage({
-        type: "setIframeHeight",
-        height: document.body.scrollHeight
-    }, "*");
+        box.appendChild(div);
+    });
 }
 
-load();
-setInterval(load, 20_000);
+loadRTP();
+setInterval(loadRTP, 60000);
