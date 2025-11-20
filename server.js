@@ -71,7 +71,6 @@ app.get("/embed/games", (req, res) => {
         text-align: center;
     }
 
-    /* Category bar */
     .provider-bar {
         display: flex;
         overflow-x: auto;
@@ -94,7 +93,6 @@ app.get("/embed/games", (req, res) => {
         font-weight: bold;
     }
 
-    /* Game Grid */
     .grid {
         display: grid;
         grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
@@ -131,7 +129,6 @@ app.get("/embed/games", (req, res) => {
         font-size: 12px;
     }
 
-    /* Pagination */
     .pagination {
         display: flex;
         justify-content: center;
@@ -149,7 +146,6 @@ app.get("/embed/games", (req, res) => {
         background: #222c55;
     }
 
-    /* Disclaimer */
     details {
         background: #141820;
         border: 1px solid #222;
@@ -164,20 +160,16 @@ app.get("/embed/games", (req, res) => {
 
 <div class="section-title">🎰 Game RTP Live Tracker</div>
 
-<!-- PROVIDER CATEGORY -->
 <div class="provider-bar" id="providerBar"></div>
 
-<!-- GAME GRID -->
 <div class="grid" id="gameGrid"></div>
 
-<!-- PAGINATION -->
 <div class="pagination">
     <div class="page-btn" id="prevPage">Previous</div>
     <div class="page-btn" id="pageInfo">Page 1</div>
     <div class="page-btn" id="nextPage">Next</div>
 </div>
 
-<!-- DISCLAIMER -->
 <details>
     <summary>Disclaimer</summary>
     <p>This data is based on bets placed on the network and does not guarantee future results.</p>
@@ -186,9 +178,6 @@ app.get("/embed/games", (req, res) => {
 <script>
 let parentBaseURL = null;
 
-// =============================
-// Receive baseURL from parent
-// =============================
 window.addEventListener("message", function(event) {
     if (event.data.baseURL) {
         parentBaseURL = event.data.baseURL;
@@ -196,9 +185,7 @@ window.addEventListener("message", function(event) {
     }
 });
 
-// =============================
-// Auto Height
-// =============================
+// AUTO HEIGHT
 function sendHeight() {
     window.parent.postMessage({
         type: "setIframeHeight",
@@ -207,9 +194,7 @@ function sendHeight() {
 }
 setInterval(sendHeight, 500);
 
-// =============================
-// Data Loading Logic
-// =============================
+// GAME DATA
 let allGames = [];
 let currentProvider = "";
 let currentPage = 1;
@@ -218,9 +203,10 @@ const pageSize = 20;
 async function loadProviders() {
     const res = await fetch("/games", {
         method: "POST",
-        headers: {"Content-Type":"application/json"},
+        headers: {"Content-Type": "application/json"},
         body: JSON.stringify({ baseURL: parentBaseURL })
     });
+
     const data = await res.json();
 
     if (!data?.data?.games) {
@@ -233,9 +219,9 @@ async function loadProviders() {
     const providers = [...new Set(allGames.map(g => g.provider || "Unknown"))];
 
     const providerBar = document.getElementById("providerBar");
-    providerBar.innerHTML = providers.map(p => `
-        <div class="provider-btn" data-provider="${p}">${p}</div>
-    `).join("");
+    providerBar.innerHTML = providers.map(p => 
+        \`<div class="provider-btn" data-provider="\${p}">\${p}</div>\`
+    ).join("");
 
     document.querySelectorAll(".provider-btn").forEach(btn =>
         btn.addEventListener("click", () => {
@@ -260,16 +246,16 @@ function displayGames() {
     const start = (currentPage - 1) * pageSize;
     const pageItems = filtered.slice(start, start + pageSize);
 
-    grid.innerHTML = pageItems.map(g => `
+    grid.innerHTML = pageItems.map(g => 
+        \`
         <div class="game-card">
-            <img src="${g.img || ''}" class="game-img">
-            <div class="game-name">${g.name}</div>
-            <div class="rtp-badge">RTP: ${g.rtp || 'N/A'}%</div>
-        </div>
-    `).join("");
+            <img src="\${g.img || ''}" class="game-img">
+            <div class="game-name">\${g.name}</div>
+            <div class="rtp-badge">RTP: \${g.rtp || 'N/A'}%</div>
+        </div>\`
+    ).join("");
 
-    document.getElementById("pageInfo").innerText =
-        "Page " + currentPage;
+    document.getElementById("pageInfo").innerText = "Page " + currentPage;
 
     sendHeight();
 }
@@ -291,7 +277,6 @@ document.getElementById("nextPage").onclick = () => {
     `);
 });
 
-
 // ====================================================================
 // API endpoint the iframe uses
 // ====================================================================
@@ -312,6 +297,7 @@ app.post("/games", async (req, res) => {
 // ====================================================================
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => console.log("Server running on port " + PORT));
+
 
 
 
