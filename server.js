@@ -6,7 +6,7 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 
 async function fetchGameList() {
-    const url = "https://wegobet.asia//api/v1/index.php";
+    const url = "https://wegobet.asia/api/v1/index.php";
 
     const form = new FormData();
     form.append("module", "/games/getGameList");
