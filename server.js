@@ -1,9 +1,10 @@
 const express = require("express");
 const path = require("path");
 const helmet = require("helmet");
-const { brands } = require("./brandConfig");
-const { fetchGamesForBrand } = require("./build-games");
-const { updateState } = require("./rtp-engine");
+const { fetchGamesForProvider } = require('./game-fetch');
+const rtpEngine = require('./rtp-engine');
+const { brands } = require('./brandConfig');
+
 
 const app = express();
 app.set("trust proxy", 1);
@@ -118,4 +119,5 @@ app.get("/embed", (req, res) => {
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => console.log("RTP server running on", PORT));
+
 
