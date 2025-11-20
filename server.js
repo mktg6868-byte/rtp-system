@@ -7,49 +7,30 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 // === CONFIG ===
-// Your provider credentials
 const ACCESS_ID = 20050695;
 const ACCESS_TOKEN = "c574d3c7b814b2efa4e62d179764b1864766adc8700240454d7fde1c56c3a855";
 const ENDPOINT = "/api/v1/index.php";
 
-// Render needs this for health check
+// Render health check
 app.get("/", (req, res) => {
     res.send("Game List API is running.");
 });
 
 // ====================================================================
-// FUNCTION → CALL PROVIDER API using iframe parent domain
+// PREMIUM GAME API → Used by the IFRAME
 // ====================================================================
-async function getGameList(baseURL, provider = "", gameType = "") {
-    const url = baseURL + ENDPOINT;
-
-    const form = new FormData();
-    form.append("module", "/games/getGameList");
-    form.append("accessId", ACCESS_ID);
-    form.append("accessToken", ACCESS_TOKEN);
-
-    if (provider) form.append("provider", provider);
-    if (gameType) form.append("gameType", gameType);
-
-    try {
-        const response = await fetch(url, {
-            method: "POST",
-            body: form
-        });
-
-        return await response.json();
-    } catch (err) {
-        console.error("Provider API Error:", err);
-        return { status: "ERROR", message: err.message };
-    }
-}
-
 app.post("/games", async (req, res) => {
     const { baseURL } = req.body;
 
+    if (!baseURL) {
+        return res.status(400).json({
+            status: "error",
+            message: "Missing baseURL from iframe parent",
+        });
+    }
+
     try {
-        // Fetch your provider API game list
-        const url = baseURL + "/api/v1/index.php";
+        const url = baseURL + ENDPOINT;
 
         const form = new FormData();
         form.append("module", "/games/getGameList");
@@ -70,24 +51,25 @@ app.post("/games", async (req, res) => {
             if (!providers[provider]) {
                 providers[provider] = {
                     displayName: provider,
-                    data: []
+                    data: [],
                 };
             }
 
-            // Assign Random RTP 40–96
-            const randomRTP = Math.floor(Math.random() * (96 - 40 + 1)) + 40;
+            // Random RTP (40–96)
+            const rtp = Math.floor(Math.random() * (96 - 40 + 1)) + 40;
 
             providers[provider].data.push({
                 gamertpid: g.GameCode,
-                gamertpnum: randomRTP,
+                gamertpnum: rtp,
                 gamertpdata: {
                     gameName: g.GameName,
                     gameImgURL: g.GameImageUrl,
-                    gameCode: g.GameCode
-                }
+                    gameCode: g.GameCode,
+                },
             });
         });
 
+        // FINAL RESPONSE (matches competitor design)
         res.json({
             status: "success",
             timestamp: Date.now(),
@@ -101,247 +83,358 @@ app.post("/games", async (req, res) => {
                     outlineColor: "#444",
                     buttonTextColor: "#ffffff",
                     buttonBgColor: "#181d3a",
-                    progressbarBgColor: "#ffc107"
+                    progressbarBgColor: "#ffc107",
                 },
-                gameRTPData: providers
-            }
+                gameRTPData: providers,
+            },
         });
-
     } catch (err) {
+        console.error("Backend Error:", err);
         res.json({ status: "error", error: err.message });
     }
 });
 
 // ====================================================================
-// ❗ EMBED PAGE (this loads inside the <iframe>)
+// IFRAME PAGE HTML (PREMIUM DESIGN)
 // ====================================================================
 app.get("/embed/games", (req, res) => {
     res.send(`
-<!DOCTYPE html>
-<html>
-<head>
-<meta charset="UTF-8" />
-<title>Game RTP</title>
-
-<style>
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+    <meta charset="UTF-8" />
+    <title>Premium Game RTP</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <style>
+    /* -----------------------------------
+       AUTO-THEME DETECTION
+    ----------------------------------- */
+    :root {
+        --accent: #00fff6;
+        --accent2: #bbff00;
+        --accent3: #a77bff;
+        --gold: #ffc107;
+        --transition: 0.25s ease;
+    }
+    
+    /* DARK THEME */
+    html.dark {
+        --bg: #0f1217;
+        --card-bg: rgba(255,255,255,0.05);
+        --text: #ffffff;
+        --subtext: #88a;
+        --border: rgba(255,255,255,0.08);
+        --nav-bg: #181d3a;
+        --nav-active: var(--gold);
+        --nav-text-active: #000;
+        --shadow: 0 8px 20px rgba(0,0,0,0.6);
+    }
+    
+    /* LIGHT THEME */
+    html.light {
+        --bg: #f6f7f9;
+        --card-bg: rgba(0,0,0,0.03);
+        --text: #111;
+        --subtext: #444;
+        --border: rgba(0,0,0,0.1);
+        --nav-bg: #ffffff;
+        --nav-active: #e1b955;
+        --nav-text-active: #111;
+        --shadow: 0 2px 8px rgba(0,0,0,0.08);
+    }
+    
     body {
         margin: 0;
-        padding: 15px;
-        background: #0f1217;
-        color: white;
+        padding: 16px;
+        background: var(--bg);
+        color: var(--text);
         font-family: Arial, sans-serif;
+        transition: background var(--transition), color var(--transition);
     }
+    
+    /* -----------------------------------
+       PROVIDER NAV
+    ----------------------------------- */
     .nav-baryuan {
         display: flex;
+        gap: 12px;
         overflow-x: auto;
-        gap: 10px;
-        padding: 10px 0;
+        padding-bottom: 12px;
+        margin-bottom: 20px;
     }
+    
     .nav-item {
-        padding: 8px 14px;
-        background: #181d3a;
-        border-radius: 20px;
+        padding: 8px 18px;
+        background: var(--nav-bg);
+        border-radius: 24px;
+        border: 1px solid var(--border);
         cursor: pointer;
         white-space: nowrap;
-        border: 1px solid #333;
-    }
-    .category-select {
-        background: #ffc107;
-        color: black;
+        color: var(--subtext);
         font-weight: bold;
+        transition: var(--transition);
     }
+    
+    .nav-item:hover {
+        transform: translateY(-2px);
+        box-shadow: var(--shadow);
+    }
+    
+    .nav-item.active {
+        background: var(--nav-active);
+        color: var(--nav-text-active);
+        transform: scale(1.05);
+    }
+    
+    /* -----------------------------------
+       GAME GRID
+    ----------------------------------- */
     .games-grid {
         display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
-        gap: 12px;
-        margin-top: 20px;
+        grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+        gap: 16px;
+        margin-bottom: 30px;
     }
+    
     .game-card {
-        background: #161b22;
-        border-radius: 10px;
-        padding: 10px;
-        text-align: center;
+        background: var(--card-bg);
+        border-radius: 14px;
+        padding: 12px;
+        border: 1px solid var(--border);
+        box-shadow: var(--shadow);
+        transition: var(--transition);
     }
+    
+    .game-card:hover {
+        transform: translateY(-6px) scale(1.03);
+    }
+    
     .game-card img {
         width: 100%;
-        border-radius: 8px;
+        border-radius: 10px;
     }
+    
+    /* -----------------------------------
+       RTP BAR
+    ----------------------------------- */
     .progress-container {
-        margin-top: 6px;
-        background: #222;
-        border-radius: 6px;
+        margin-top: 8px;
+        background: var(--border);
+        border-radius: 8px;
         overflow: hidden;
     }
+    
     .progress-bar {
-        height: 18px;
-        border-radius: 6px;
+        height: 20px;
         color: #fff;
         font-size: 12px;
+        line-height: 20px;
         text-align: center;
-        line-height: 18px;
+        transition: width 0.35s ease;
+        background: linear-gradient(90deg,
+            #ff3e57, /* red */
+            #ff9800, /* orange */
+            #fce83a, /* yellow */
+            #4caf50  /* green */
+        );
     }
-    .red { background: #d9534f; }
-    .orange { background: #ff9800; }
-    .blue { background: #2196f3; }
-    .green { background: #4caf50; }
-
-</style>
-</head>
-<body>
-
-<div class="nav-baryuan" id="providerCategory"></div>
-
-<div class="games-grid" id="gameRTP"></div>
-
-<div style="margin-top:20px; display:flex; justify-content:space-between;">
-    <button id="prevPage">Previous</button>
-    <div id="paginationInfo">Page 1</div>
-    <button id="nextPage">Next</button>
-</div>
-
-<script>
-/* -------------------------
-   AUTO HEIGHT LIKE COMPETITOR
---------------------------*/
-function sendHeight() {
-    const height = document.body.scrollHeight;
-    window.parent.postMessage({ type: 'setIframeHeight', height }, '*');
-}
-window.addEventListener('load', sendHeight);
-new ResizeObserver(sendHeight).observe(document.body);
-
-/* -------------------------
-   RECEIVE BASEURL FROM PARENT
---------------------------*/
-let parentBaseURL = null;
-window.addEventListener("message", e => {
-    if (e.data?.baseURL) {
-        parentBaseURL = e.data.baseURL;
-        loadRTP();
+    
+    /* -----------------------------------
+       PAGINATION
+    ----------------------------------- */
+    .pagination {
+        display: flex;
+        justify-content: center;
+        gap: 16px;
+        margin-top: 10px;
+        margin-bottom: 30px;
     }
-});
-
-/* -------------------------
-   LOAD & PROCESS GAME DATA
---------------------------*/
-let providers = {};
-let currentProvider = "";
-let currentPage = 1;
-const itemsPerPage = 60;
-
-async function loadRTP() {
-    const res = await fetch("/games", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ baseURL: parentBaseURL })
+    
+    .page-btn {
+        padding: 10px 18px;
+        background: var(--nav-bg);
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        cursor: pointer;
+        font-weight: bold;
+        transition: var(--transition);
+    }
+    
+    .page-btn:hover {
+        background: var(--nav-active);
+        color: var(--nav-text-active);
+    }
+    
+    /* -----------------------------------
+       FAQ SECTION
+    ----------------------------------- */
+    details {
+        background: var(--card-bg);
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        padding: 14px;
+        margin-bottom: 12px;
+    }
+    details summary {
+        cursor: pointer;
+        font-weight: bold;
+        padding: 4px 0;
+    }
+    
+    </style>
+    </head>
+    
+    <body>
+    
+    <div class="nav-baryuan" id="providerCategory"></div>
+    <div class="games-grid" id="gameRTP"></div>
+    
+    <div class="pagination">
+        <div class="page-btn" id="prevPage">Previous</div>
+        <div class="page-btn" id="pageInfo">Page 1</div>
+        <div class="page-btn" id="nextPage">Next</div>
+    </div>
+    
+    <details>
+        <summary>Disclaimer</summary>
+        <p>This RTP overview is generated for entertainment and informational purposes only.</p>
+    </details>
+    
+    <script>
+    /* -----------------------------------
+       AUTO THEME DETECTION
+    ----------------------------------- */
+    function isDark(color) {
+        const c = color.match(/\d+/g).map(Number);
+        const brightness = (c[0] * 299 + c[1] * 587 + c[2] * 114) / 1000;
+        return brightness < 140;
+    }
+    
+    (function detectTheme() {
+        let bg = window.parent.getComputedStyle(window.frameElement)?.backgroundColor || "rgb(20,20,20)";
+        if (isDark(bg)) document.documentElement.classList.add("dark");
+        else document.documentElement.classList.add("light");
+    })();
+    
+    /* -----------------------------------
+       AUTO HEIGHT
+    ----------------------------------- */
+    function sendHeight() {
+        const h = document.body.scrollHeight;
+        window.parent.postMessage({ type: "setIframeHeight", height: h }, "*");
+    }
+    window.addEventListener("load", sendHeight);
+    new ResizeObserver(sendHeight).observe(document.body);
+    
+    /* -----------------------------------
+       RECEIVE BASE URL
+    ----------------------------------- */
+    let parentBaseURL = null;
+    window.addEventListener("message", (event) => {
+        if (event.data?.baseURL) {
+            parentBaseURL = event.data.baseURL;
+            loadGameData();
+        }
     });
-
-    const json = await res.json();
-    providers = json.data.gameRTPData;
-
-    buildProviderNav();
-}
-
-function buildProviderNav() {
-    const holder = document.getElementById("providerCategory");
-    holder.innerHTML = "";
-
-    Object.keys(providers).forEach(p => {
-        const btn = document.createElement("div");
-        btn.className = "nav-item";
-        btn.dataset.provider = p;
-        btn.innerText = providers[p].displayName;
-        btn.onclick = () => selectProvider(p, btn);
-        holder.appendChild(btn);
-    });
-
-    // Auto-select first provider
-    const first = document.querySelector(".nav-item");
-    if (first) first.click();
-}
-
-function selectProvider(provider, btn) {
-    document.querySelectorAll(".nav-item").forEach(el =>
-        el.classList.remove("category-select")
-    );
-    btn.classList.add("category-select");
-
-    currentProvider = provider;
-    currentPage = 1;
-    renderGames();
-}
-
-function renderGames() {
-    const container = document.getElementById("gameRTP");
-    container.innerHTML = "";
-
-    const list = providers[currentProvider].data;
-
-    const start = (currentPage - 1) * itemsPerPage;
-    const end = start + itemsPerPage;
-    const subset = list.slice(start, end);
-
-    subset.forEach(g => {
-        const rtp = g.gamertpnum;
-        let color =
-            rtp <= 40 ? "red" :
-            rtp <= 50 ? "orange" :
-            rtp <= 65 ? "blue" : "green";
-
-        container.innerHTML += \`
-            <div class="game-card">
-                <img src="\${g.gamertpdata.gameImgURL}" onerror="this.src='https://dummyimage.com/300x300/111/fff&text=No+Image';">
-                <div style="margin-top:6px;">\${g.gamertpdata.gameName}</div>
-                <div class="progress-container">
-                    <div class="progress-bar \${color}" style="width: \${rtp}%;">
-                        \${rtp}%
+    
+    /* -----------------------------------
+       LOAD GAME LIST
+    ----------------------------------- */
+    let providers = {};
+    let currentProvider = "";
+    let currentPage = 1;
+    const itemsPerPage = 60;
+    
+    async function loadGameData() {
+        const res = await fetch("/games", {
+            method: "POST",
+            headers: {"Content-Type": "application/json"},
+            body: JSON.stringify({ baseURL: parentBaseURL })
+        });
+    
+        const json = await res.json();
+        providers = json.data.gameRTPData;
+    
+        buildNav();
+    }
+    
+    function buildNav() {
+        const nav = document.getElementById("providerCategory");
+        nav.innerHTML = "";
+    
+        Object.keys(providers).forEach((p) => {
+            const btn = document.createElement("div");
+            btn.className = "nav-item";
+            btn.innerText = providers[p].displayName;
+            btn.onclick = () => selectProvider(p, btn);
+            nav.appendChild(btn);
+        });
+    
+        const first = document.querySelector(".nav-item");
+        if (first) first.click();
+    }
+    
+    function selectProvider(provider, btn) {
+        document.querySelectorAll(".nav-item").forEach((x) => x.classList.remove("active"));
+        btn.classList.add("active");
+    
+        currentProvider = provider;
+        currentPage = 1;
+        renderGames();
+    }
+    
+    function renderGames() {
+        const grid = document.getElementById("gameRTP");
+        grid.innerHTML = "";
+    
+        const list = providers[currentProvider].data;
+        const start = (currentPage - 1) * itemsPerPage;
+        const end = start + itemsPerPage;
+        const subset = list.slice(start, end);
+    
+        subset.forEach((g) => {
+            grid.innerHTML += \`
+                <div class="game-card">
+                    <img src="\${g.gamertpdata.gameImgURL}" onerror="this.src='https://dummyimage.com/400x400/222/fff&text=No+Image';">
+                    <div style="margin-top:6px;font-weight:bold;">\${g.gamertpdata.gameName}</div>
+                    <div class="progress-container">
+                        <div class="progress-bar" style="width:\${g.gamertpnum}%;">
+                            \${g.gamertpnum}%
+                        </div>
                     </div>
                 </div>
-            </div>
-        \`;
-    });
-
-    document.getElementById("paginationInfo").innerText =
-        "Page " + currentPage;
-
-    sendHeight();
-}
-
-document.getElementById("prevPage").onclick = () => {
-    if (currentPage > 1) { currentPage--; renderGames(); }
-};
-document.getElementById("nextPage").onclick = () => {
-    currentPage++; renderGames();
-};
-
-</script>
-
-</body>
-</html>
+            \`;
+        });
+    
+        document.getElementById("pageInfo").innerText = "Page " + currentPage;
+        sendHeight();
+    }
+    
+    document.getElementById("prevPage").onclick = () => {
+        if (currentPage > 1) {
+            currentPage--;
+            renderGames();
+        }
+    };
+    document.getElementById("nextPage").onclick = () => {
+        currentPage++;
+        renderGames();
+    };
+    </script>
+    
+    </body>
+    </html>
     `);
 });
 
-
 // ====================================================================
-// API endpoint the iframe uses
-// ====================================================================
-app.post("/games", async (req, res) => {
-    const { baseURL, provider = "", gameType = "" } = req.body;
-
-    if (!baseURL) {
-        return res.status(400).json({ 
-            status: "ERROR",
-            message: "Missing baseURL from iframe parent"
-        });
-    }
-
-    const result = await getGameList(baseURL, provider, gameType);
-    res.json(result);
-});
-
+// START SERVER
 // ====================================================================
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => console.log("Server running on port " + PORT));
+app.listen(PORT, () =>
+    console.log("Server running on port " + PORT)
+);
 
 
 
