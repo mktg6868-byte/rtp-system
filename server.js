@@ -22,12 +22,27 @@ if (ALLOWED_ORIGINS.length === 0) {
   console.log("Using default ALLOWED_ORIGINS:", ALLOWED_ORIGINS);
 }
 
-// Basic security headers
+// Security headers – allow embedding by your casino sites
 app.use(
   helmet({
-    contentSecurityPolicy: false
+    contentSecurityPolicy: {
+      useDefaults: true,
+      directives: {
+        "default-src": ["'self'", "https:"],
+        "img-src": ["*", "data:"],
+        "style-src": ["'self'", "'unsafe-inline'", "https:"],
+        "script-src": ["'self'", "'unsafe-inline'", "https:"],
+        "frame-ancestors": [
+          "'self'",
+          "https://i88sg.com",
+          "https://wegobet.asia"
+        ]
+      }
+    },
+    frameguard: false // IMPORTANT! Allows iframe embedding
   })
 );
+
 
 // Static files
 app.use("/public", express.static(path.join(__dirname, "public")));
@@ -114,3 +129,4 @@ app.listen(PORT, () => {
   console.log(`RTP server running on port ${PORT}`);
   console.log("Allowed origins:", ALLOWED_ORIGINS);
 });
+
