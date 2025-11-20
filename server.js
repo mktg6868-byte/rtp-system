@@ -46,6 +46,42 @@ async function getBrandData(baseOrigin) {
 
     return cache[baseOrigin].data;
 }
+// Debugging: Test API connectivity
+app.get('/test-api', async (req, res) => {
+    try {
+        const formData = new (require('form-data'))();
+        formData.append("module", "/games/getGameList");
+        formData.append("accessId", "20050695");
+        formData.append("accessToken", "c574d3c7b814b2efa4e62d179764b1864766adc8700240454d7fde1c56c3a855");
+        formData.append("product", "0");
+        formData.append("site", "PP");
+
+        const response = await fetch("https://wegobet.asia/api/v1/index.php", {
+            method: "POST",
+            body: formData
+        });
+
+        const text = await response.text();
+
+        // Try to parse JSON if possible
+        try {
+            res.json({
+                raw: text,
+                json: JSON.parse(text)
+            });
+        } catch (e) {
+            res.json({
+                raw: text,
+                json: "Not JSON",
+                error: e.toString()
+            });
+        }
+
+    } catch (e) {
+        res.json({ error: e.toString() });
+    }
+});
+
 
 app.get("/api/rtp", async (req, res) => {
     try {
@@ -82,3 +118,4 @@ app.get("/embed", (req, res) => {
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => console.log("RTP server running on", PORT));
+
