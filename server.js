@@ -8,8 +8,8 @@ app.use(express.urlencoded({ extended: true }));
 
 // === CONFIG ===
 // Your provider credentials
-const ACCESS_ID = 12345;
-const ACCESS_TOKEN = "your-token-here";
+const ACCESS_ID = 20050695;
+const ACCESS_TOKEN = "c574d3c7b814b2efa4e62d179764b1864766adc8700240454d7fde1c56c3a855";
 const ENDPOINT = "/api/v1/index.php";
 
 // Render needs this for health check
@@ -127,3 +127,4 @@ app.post("/games", async (req, res) => {
 // ====================================================================
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => console.log("Server running on port " + PORT));
+
