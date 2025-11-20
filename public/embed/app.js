@@ -199,14 +199,27 @@ setInterval(() => {
   loadRtpData(false);
 }, 60000);
 
+// ===============================
+// AUTO IFRAME HEIGHT ADJUSTMENT
+// ===============================
+
+// Send height to parent frame
 function sendHeight() {
-    const h = document.documentElement.scrollHeight;
-    window.parent.postMessage({ type: "setIframeHeight", height: h }, "*");
+    const height = document.documentElement.scrollHeight;
+    window.parent.postMessage(
+        { type: "setIframeHeight", height },
+        "*"
+    );
 }
 
-// send initial height
+// Initial height
 setTimeout(sendHeight, 500);
 
-// update height after each RTP reload
-setInterval(sendHeight, 2000);
+// Height after each RTP refresh
+setInterval(sendHeight, 1500);
+
+// Also re-send height whenever images finish loading
+window.addEventListener("load", sendHeight);
+document.addEventListener("DOMContentLoaded", sendHeight);
+
 
