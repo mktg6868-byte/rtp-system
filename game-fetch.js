@@ -1,14 +1,6 @@
 const FormData = require("form-data");
 const fetch = require("node-fetch");
 
-/**
- * Fetch game list from provider API using:
- * module=/games/getGameList
- * accessId=xxxx
- * accessToken=xxxx
- * product=0
- * site=PP/JILI/etc
- */
 async function fetchGamesForProvider(brand, provider) {
     const url = brand.apiBase + "/api/v1/index.php";
 
@@ -16,21 +8,17 @@ async function fetchGamesForProvider(brand, provider) {
     form.append("module", "/games/getGameList");
     form.append("accessId", brand.accessId);
     form.append("accessToken", brand.accessToken);
-    form.append("product", provider.product); 
+    form.append("product", provider.product);
     form.append("site", provider.site);
 
     console.log(`→ Fetching games for ${provider.code}`);
 
     try {
-        const res = await fetch(url, {
-            method: "POST",
-            body: form
-        });
-
+        const res = await fetch(url, { method: "POST", body: form });
         const json = await res.json();
 
         if (json.status !== "SUCCESS") {
-            console.log("❌ API returned invalid response", json);
+            console.log("❌ Invalid response", json);
             return [];
         }
 
@@ -41,8 +29,8 @@ async function fetchGamesForProvider(brand, provider) {
             thumb: g.GameImageUrl || null
         }));
     }
-    catch (err) {
-        console.log("❌ Fetch failed:", err);
+    catch(err) {
+        console.log("❌ API fetch failed:", err);
         return [];
     }
 }
