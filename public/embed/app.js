@@ -198,3 +198,15 @@ loadRtpData(true);
 setInterval(() => {
   loadRtpData(false);
 }, 60000);
+
+function sendHeight() {
+    const h = document.documentElement.scrollHeight;
+    window.parent.postMessage({ type: "setIframeHeight", height: h }, "*");
+}
+
+// send initial height
+setTimeout(sendHeight, 500);
+
+// update height after each RTP reload
+setInterval(sendHeight, 2000);
+
