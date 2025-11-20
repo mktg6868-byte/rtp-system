@@ -1,37 +1,29 @@
 body {
+    background: #0a0f1a;
     font-family: Arial, sans-serif;
-    background: #0a0a12;
-    margin: 0;
-    padding: 0;
     color: white;
+    padding: 20px;
 }
 
-.provider {
-    margin-top: 20px;
-    font-weight: bold;
-    font-size: 22px;
+#rtp-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    gap: 12px;
 }
 
-.game {
-    display: flex;
-    align-items: center;
-    background: #1b1b2b;
-    margin-bottom: 6px;
+.game-card {
+    background: #1c2333;
+    border-radius: 10px;
     padding: 10px;
+    text-align: center;
+}
+
+.game-card img {
+    width: 100%;
     border-radius: 8px;
 }
 
-.thumb {
-    width: 80px;
-    height: 80px;
-    background-size: cover;
-    background-position: center;
-    border-radius: 6px;
-    margin-right: 12px;
-}
-
 .rtp {
-    margin-left: auto;
-    font-size: 20px;
-    font-weight: bold;
+    font-size: 14px;
+    margin-top: 6px;
 }
