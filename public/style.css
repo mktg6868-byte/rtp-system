@@ -150,15 +150,11 @@ html, body {
 }
 
 .game-image-wrapper {
-    width: 100%;
-    height: 130px;
     background: rgba(255,255,255,0.08);
-    border-radius: 12px;
     display: flex;
     align-items: center;
     justify-content: center;
     overflow: hidden;
-    padding: 6px;
     box-shadow: inset 0 0 10px rgba(0,0,0,0.35);
 }
 
@@ -212,11 +208,9 @@ html, body {
 
 /* MOBILE FIX */
 @media (max-width: 420px) {
-    .game-image {
-        height: 90px;
-    }
     .game-title {
         font-size: 13px;
     }
 }
+
 
