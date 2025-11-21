@@ -3,12 +3,12 @@
     --text-color: #ffffff;
     --accent-color: #00e676;
     --button-bg: #00e676;
-    --button-text: #ffffff;
+    --button-text: #000;
     --outline-color: rgba(255,255,255,0.2);
     --progress-bg: rgba(255,255,255,0.2);
 }
 
-/* MAKE BACKGROUND TRANSPARENT FOR IFRAME EMBED */
+/* TRANSPARENT BACKGROUND */
 html, body {
     margin: 0;
     padding: 0;
@@ -18,15 +18,13 @@ html, body {
     overflow-x: hidden;
 }
 
-/* MAIN PAGE WRAPPER */
+/* MAIN WRAPPER */
 .rtp-wrapper {
-    position: relative;
     width: 100%;
     padding: 10px;
     box-sizing: border-box;
-    overflow-x: hidden;
-    background: transparent !important;
     animation: fadeIn 0.4s ease;
+    background: transparent !important;
 }
 
 @keyframes fadeIn {
@@ -35,17 +33,10 @@ html, body {
 }
 
 /* HEADER */
-.rtp-header {
-    width: 100%;
-    text-align: center;
-    margin-bottom: 15px;
-}
-
 .rtp-header img {
     width: 100%;
-    height: auto;
     border-radius: 12px;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.35);
+    box-shadow: 0 4px 20px rgba(0,0,0,0.35);
 }
 
 .rtp-refresh-bar {
@@ -53,194 +44,163 @@ html, body {
     background: rgba(255,255,255,0.15);
     height: 7px;
     border-radius: 5px;
-    overflow: hidden;
 }
 
 #countdownBar {
     height: 100%;
     width: 100%;
     background: linear-gradient(90deg, #4cd964, #2ecc71);
-    border-radius: 5px;
 }
 
-.refresh-text {
-    margin-top: 6px;
-    text-align: center;
+/* FIXED PAGINATION BAR ABOVE GAMES */
+.pagination {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    margin: 15px 0;
+}
+
+.pagination button {
+    background: #00e676;
+    border: none;
+    padding: 7px 14px;
+    border-radius: 6px;
+    font-weight: bold;
+    font-size: 13px;
+    cursor: pointer;
+    color: #000;
+}
+
+#pageInfo {
+    color: #fff;
     font-size: 14px;
-    color: #ddd;
+    padding-top: 5px;
 }
 
 /* PROVIDER BAR */
 .provider-row {
     display: flex;
-    flex-wrap: nowrap;
-    overflow-x: auto;
+    align-items: center;
     gap: 10px;
-    padding: 10px 0;
-    -webkit-overflow-scrolling: touch;
-}
-
-.provider-row::-webkit-scrollbar {
-    display: none;
+    margin: 10px 0 20px;
 }
 
 .scroll-btn {
     background: var(--button-bg);
-    color: var(--button-text);
-    border: none;
-    padding: 6px 10px;
-    border-radius: 6px;
-    font-size: 14px;
-    cursor: pointer;
-    flex-shrink: 0;
-}
-
-.nav-item {
-    flex-shrink: 0;
-    padding: 8px 16px;
-    background: rgba(255,255,255,0.15);
+    color: #000;
+    padding: 8px 12px;
     border-radius: 8px;
-    white-space: nowrap;
-    font-size: 14px;
-    color: #fff;
+    border: none;
+    font-size: 16px;
+    font-weight: bold;
+}
+
+.provider-scroll {
+    display: flex;
+    gap: 10px;
+    overflow-x: auto;
+    flex-grow: 1;
+}
+
+.provider-scroll div {
+    background: rgba(255,255,255,0.15);
+    padding: 8px 16px;
+    border-radius: 8px;
     border: 1px solid rgba(255,255,255,0.18);
-    backdrop-filter: blur(4px);
-    transition: 0.15s ease;
+    backdrop-filter: blur(5px);
+    cursor: pointer;
+    white-space: nowrap;
 }
 
-.nav-item:hover {
-    background: rgba(255,255,255,0.28);
-}
-
-.nav-item.active {
+.provider-scroll .active {
     background: #00e676;
-    border-color: #00c853;
     color: #000;
 }
 
-/* PROVIDER TITLE */
+/* TITLE */
 .provider-title {
-    margin: 15px 0;
-    text-align: center;
+    margin: 6px 0 16px;
+    padding: 0 5px;
     font-size: 22px;
     font-weight: bold;
-    letter-spacing: 0.4px;
-    color: #fff;
+    text-align: center;
 }
 
-/* GAME GRID — ALWAYS 3 PER ROW */
+/* GAME GRID (3 PER ROW ALWAYS) */
 .games-grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     gap: 14px;
-    padding-bottom: 10px;
 }
 
-/* PREMIUM GAME CARD */
+/* GAME CARD */
 .game-card {
-    background: rgba(25,25,35,0.55);
-    border-radius: 14px;
+    background: rgba(20,20,30,0.6);
+    border-radius: 12px;
     padding: 10px;
-    overflow: hidden;
-    backdrop-filter: blur(8px);
-    border: 1px solid rgba(255,255,255,0.08);
-    box-shadow: 0 6px 16px rgba(0,0,0,0.35);
+    backdrop-filter: blur(6px);
+    border: 1px solid rgba(255,255,255,0.10);
+    box-shadow: 0 6px 18px rgba(0,0,0,0.35);
     transition: 0.25s ease;
-    cursor: pointer;
 }
 
 .game-card:hover {
     transform: translateY(-6px);
-    box-shadow: 0 10px 25px rgba(0,0,0,0.45);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.45);
 }
 
-/* GAME IMAGE */
+/* IMAGE */
 .game-image {
     width: 100%;
-    height: 120px;
-    object-fit: cover;
+    height: 100px;
     border-radius: 10px;
-    margin-bottom: 10px;
+    object-fit: cover;
 }
 
-/* GAME TITLE */
+/* TITLE */
 .game-title {
     font-size: 14px;
-    font-weight: 600;
-    color: #fff;
-    margin-bottom: 4px;
+    font-weight: bold;
+    margin-top: 8px;
 }
 
-/* SUBTITLE (Provider name) */
+/* PROVIDER TEXT */
 .game-sub {
     font-size: 12px;
     color: #bbb;
-    margin-bottom: 6px;
 }
 
-/* RTP TEXT */
+/* RTP text row */
 .rtp-info {
     display: flex;
     justify-content: space-between;
     font-size: 12px;
-    margin-bottom: 6px;
-    color: #eee;
+    margin: 5px 0;
 }
 
-/* RTP BAR CONTAINER */
+/* RTP BAR */
 .progress-container {
     width: 100%;
     height: 8px;
-    background: rgba(255,255,255,0.18);
+    background: rgba(255,255,255,0.20);
     border-radius: 6px;
-    overflow: hidden;
 }
 
-/* RTP BAR FILL */
 .progress-bar {
     height: 100%;
     border-radius: 6px;
-    transition: width 0.3s ease;
 }
 
 /* RTP COLORS */
-.rtp-low  { background: #e74c3c; }
-.rtp-mid  { background: #f39c12; }
-.rtp-high { background: #3498db; }
-.rtp-hot  { background: #2ecc71; }
+.rtp-low { background: #ff4d4d; }
+.rtp-mid { background: #ffa726; }
+.rtp-high { background: #42a5f5; }
+.rtp-hot { background: #00e676; }
 
-/* PAGINATION */
-.pagination {
-    text-align: center;
-    margin-top: 18px;
-}
-
-.pagination button {
-    padding: 8px 16px;
-    background: #00e676;
-    color: #000;
-    border: none;
-    border-radius: 6px;
-    margin: 0 6px;
-    font-size: 14px;
-    cursor: pointer;
-    transition: background 0.2s ease;
-}
-
-.pagination button:hover {
-    background: #00c853;
-}
-
-#pageInfo {
-    margin: 0 10px;
-    color: #eee;
-    font-size: 14px;
-}
-
-/* MOBILE RESPONSIVENESS (Still 3 columns but adaptive) */
-@media (max-width: 480px) {
+/* MOBILE FIX */
+@media (max-width: 420px) {
     .game-image {
-        height: 100px;
+        height: 90px;
     }
     .game-title {
         font-size: 13px;
