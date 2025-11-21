@@ -106,12 +106,16 @@ function sendHeight() {
     const height = document.body.scrollHeight;
     window.parent.postMessage({ type: 'setIframeHeight', height }, '*');
 }
+
+// Automatically send height changes
 new ResizeObserver(sendHeight).observe(document.body);
 window.onload = sendHeight;
 </script>
 
+
 </body>
 </html>
+
 
 
 
