@@ -1,120 +1,149 @@
+/* ======================================================
+   PREMIUM RTP PAGE – MODERN CASINO STYLE
+   ====================================================== */
+
 /* ROOT THEME */
 :root {
     --accent: #00e676;
     --text: #ffffff;
-    --glass: rgba(255,255,255,0.10);
-    --border: rgba(255,255,255,0.18);
-    --shadow: rgba(0,0,0,0.45);
+    --glass-bg: rgba(255,255,255,0.12);
+    --glass-border: rgba(255,255,255,0.22);
+    --soft-shadow: rgba(0,0,0,0.45);
 }
 
 html, body {
-    margin: 0 !important;
-    padding: 0 !important;
+    margin: 0;
+    padding: 0;
+    font-family: Inter, Arial, sans-serif;
     background: transparent !important;
-    overflow-x: hidden !important;
+    color: var(--text);
+    overflow-x: hidden;
 }
 
-/* WRAPPER */
+/* MAIN WRAPPER */
 .rtp-wrapper {
     width: 100%;
-    padding: 10px 12px 30px;
+    padding: 12px 14px 40px;
     box-sizing: border-box;
 }
 
-/* HEADER */
+
+
+/* ======================================================
+   HEADER
+   ====================================================== */
+
 .rtp-header {
     text-align: center;
+    margin-bottom: 20px;
 }
 
-.rtp-banner {
+.rtp-header-img {
     width: 100%;
     border-radius: 14px;
-    box-shadow: 0 6px 20px rgba(0,0,0,0.40);
+    box-shadow: 0 6px 22px rgba(0,0,0,0.45);
 }
 
-.rtp-progress {
+.rtp-bar-container {
     width: 100%;
     height: 8px;
     background: rgba(255,255,255,0.15);
     border-radius: 6px;
     margin: 14px 0 6px;
+    overflow: hidden;
 }
 
 #countdownBar {
     height: 100%;
     width: 100%;
-    background: var(--accent);
     border-radius: 6px;
+    background: var(--accent);
     transition: width 0.3s linear;
 }
 
-.rtp-count-label {
+.rtp-count-text {
     font-size: 14px;
     opacity: 0.85;
 }
 
-/* PROVIDER SELECTOR */
-.provider-container {
-    margin: 22px 0 16px;
+
+
+/* ======================================================
+   PROVIDER SELECTOR (MODERN GLASS)
+   ====================================================== */
+
+.provider-section {
+    margin: 20px 0 18px;
 }
 
-.provider-scroll {
+.provider-scroll-clean {
     display: flex;
     gap: 12px;
     overflow-x: auto;
-    padding: 6px 4px;
+    padding: 8px 4px;
     scrollbar-width: none;
 }
 
-.provider-scroll::-webkit-scrollbar { display: none; }
-
-.provider-scroll div {
-    padding: 10px 22px;
-    border-radius: 40px;
-    background: var(--glass);
-    border: 1px solid var(--border);
-    backdrop-filter: blur(8px);
-    font-size: 14px;
-    white-space: nowrap;
-    cursor: pointer;
-    transition: 0.25s ease;
-    box-shadow: 0 4px 12px var(--shadow);
+.provider-scroll-clean::-webkit-scrollbar {
+    display: none;
 }
 
-.provider-scroll div:hover {
+/* Provider option */
+.provider-scroll-clean div {
+    padding: 10px 22px;
+    background: var(--glass-bg);
+    border: 1px solid var(--glass-border);
+    backdrop-filter: blur(8px);
+    border-radius: 40px;
+    white-space: nowrap;
+    color: var(--text);
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 500;
+    box-shadow: 0 4px 12px var(--soft-shadow);
+    transition: 0.25s ease;
+}
+
+/* Hover effect */
+.provider-scroll-clean div:hover {
     background: rgba(255,255,255,0.18);
     transform: translateY(-3px);
 }
 
-.provider-scroll .active {
+/* Active provider */
+.provider-scroll-clean .active {
     background: var(--accent);
     color: #000;
-    border-color: var(--accent);
     font-weight: 700;
+    border-color: var(--accent);
     box-shadow: 0 0 18px rgba(0,230,118,0.45);
 }
 
-/* GAME GRID */
+
+
+/* ======================================================
+   GAME GRID + CARD STYLE
+   ====================================================== */
+
 .games-grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     gap: 14px;
 }
 
-/* GAME CARD */
 .game-card {
     background: rgba(255,255,255,0.07);
-    border: 1px solid rgba(255,255,255,0.12);
-    padding: 10px;
+    border: 1px solid rgba(255,255,255,0.15);
     border-radius: 12px;
+    padding: 10px;
     backdrop-filter: blur(8px);
-    box-shadow: 0 6px 20px var(--shadow);
+    box-shadow: 0 6px 20px rgba(0,0,0,0.35);
     transition: 0.25s ease;
 }
 
 .game-card:hover {
     transform: translateY(-5px);
-    box-shadow: 0 10px 24px var(--shadow);
+    box-shadow: 0 10px 26px rgba(0,0,0,0.45);
 }
 
 .game-image-wrapper {
@@ -135,27 +164,27 @@ html, body {
 
 .game-title {
     font-size: 13px;
-    margin-top: 8px;
     font-weight: 700;
+    margin-top: 8px;
 }
 
 .game-sub {
     font-size: 11px;
-    opacity: 0.8;
-    margin-bottom: 4px;
+    opacity: 0.75;
 }
 
 .rtp-info {
     display: flex;
     justify-content: space-between;
     font-size: 11px;
+    margin: 4px 0;
 }
 
 .progress-container {
+    width: 100%;
     height: 7px;
+    background: rgba(255,255,255,0.20);
     border-radius: 6px;
-    background: rgba(255,255,255,0.15);
-    margin-top: 4px;
 }
 
 .progress-bar {
@@ -168,26 +197,31 @@ html, body {
 .rtp-high { background: #42a5f5; }
 .rtp-hot { background: #00e676; }
 
-/* PAGINATION */
-.pagination {
-    text-align: center;
+
+
+/* ======================================================
+   PAGINATION (MODERN ROUNDED)
+   ====================================================== */
+
+.pagination-section {
     margin-top: 28px;
     display: flex;
     justify-content: center;
     align-items: center;
-    gap: 14px;
+    gap: 16px;
 }
 
 .page-btn {
-    padding: 10px 20px;
-    background: var(--accent);
+    padding: 10px 22px;
     border-radius: 40px;
+    background: var(--accent);
+    color: #000;
     border: none;
     font-weight: 700;
-    color: #000;
+    box-shadow: 0 4px 14px rgba(0,230,118,0.35);
     cursor: pointer;
-    box-shadow: 0 4px 16px rgba(0,230,118,0.40);
     transition: 0.25s ease;
+    font-size: 14px;
 }
 
 .page-btn:hover {
@@ -199,9 +233,20 @@ html, body {
     opacity: 0.85;
 }
 
-@media (max-width: 420px) {
-    .games-grid { gap: 10px; }
-    .game-title { font-size: 12px; }
-    .game-sub { font-size: 10px; }
-}
 
+
+/* ======================================================
+   RESPONSIVE FIXES
+   ====================================================== */
+
+@media (max-width: 420px) {
+    .games-grid {
+        gap: 10px;
+    }
+    .game-title {
+        font-size: 12px;
+    }
+    .game-sub {
+        font-size: 10px;
+    }
+}
