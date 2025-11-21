@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="style.css" />
+    <title>Game RTP</title>
+</head>
+
+<body>
+
+<div class="rtp-wrapper">
+
+    <div class="rtp-header">
+        <img id="rtpHeaderImg" src="" alt="RTP Header" />
+        <div class="rtp-refresh-bar"><div id="countdownBar"></div></div>
+        <div class="refresh-text">Next update in: <span id="refreshTime">--</span></div>
+    </div>
+
+    <div class="provider-row">
+        <button class="scroll-btn left">&lt;</button>
+        <div class="provider-scroll" id="providerList"></div>
+        <button class="scroll-btn right">&gt;</button>
+    </div>
+
+    <div class="provider-title" id="selectedProviderName">Select Provider</div>
+
+    <div class="games-grid" id="gamesGrid"></div>
+
+    <div class="pagination">
+        <button id="prevPage">Prev</button>
+        <span id="pageInfo">Page 1 / 1</span>
+        <button id="nextPage">Next</button>
+    </div>
+
+</div>
+
+<script src="app.js"></script>
+
+<script>
+function sendHeight() {
+    const height = document.body.scrollHeight;
+    window.parent.postMessage({ type: 'setIframeHeight', height }, '*');
+}
+new ResizeObserver(sendHeight).observe(document.body);
+window.onload = sendHeight;
+</script>
+
+</body>
+</html>
