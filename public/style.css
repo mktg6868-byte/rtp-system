@@ -1,334 +1,285 @@
-/* ROOT VARIABLES */
+/* ===========================================================
+   ROOT VARIABLES (adjust these to change global color theme)
+   =========================================================== */
 :root {
     --text-color: #ffffff;
     --accent-color: #00e676;
-    --button-bg: #00e676;
-    --button-text: #000;
-    --outline-color: rgba(255,255,255,0.2);
-    --progress-bg: rgba(255,255,255,0.2);
+    --glass-bg: rgba(255,255,255,0.08);
+    --glass-border: rgba(255,255,255,0.18);
+    --glass-hover: rgba(255,255,255,0.22);
+    --shadow-1: 0 6px 18px rgba(0,0,0,0.35);
+    --shadow-2: 0 10px 30px rgba(0,0,0,0.45);
 }
 
-/* TRANSPARENT BACKGROUND */
+/* ============================================
+   GLOBAL BASE
+   ============================================ */
 html, body {
     margin: 0;
     padding: 0;
     background: transparent !important;
-    font-family: Arial, sans-serif;
+    font-family: "Inter", Arial, sans-serif;
     color: var(--text-color);
     overflow-x: hidden;
 }
 
-/* MAIN WRAPPER */
 .rtp-wrapper {
     width: 100%;
-    padding: 10px;
+    padding: 14px;
     box-sizing: border-box;
-    animation: fadeIn 0.4s ease;
+    animation: fadeIn 0.35s ease;
     background: transparent !important;
 }
 
 @keyframes fadeIn {
-    from { opacity: 0; transform: translateY(8px); }
+    from { opacity: 0; transform: translateY(10px); }
     to { opacity: 1; transform: translateY(0); }
 }
 
-/* HEADER */
+/* ============================================
+   HEADER IMAGE
+   ============================================ */
 .rtp-header img {
     width: 100%;
-    border-radius: 12px;
-    box-shadow: 0 4px 20px rgba(0,0,0,0.35);
+    border-radius: 14px;
+    box-shadow: var(--shadow-1);
 }
 
+/* COUNTDOWN BAR */
 .rtp-refresh-bar {
     margin-top: 12px;
-    background: rgba(255,255,255,0.15);
+    background: rgba(255,255,255,0.12);
     height: 7px;
-    border-radius: 5px;
+    border-radius: 6px;
 }
-
 #countdownBar {
     height: 100%;
-    width: 100%;
     background: linear-gradient(90deg, #4cd964, #2ecc71);
-}
-
-/* FIXED PAGINATION BAR ABOVE GAMES */
-.pagination {
-    display: flex;
-    justify-content: center;
-    gap: 12px;
-    margin: 15px 0;
-}
-
-.pagination button {
-    background: #00e676;
-    border: none;
-    padding: 7px 14px;
     border-radius: 6px;
-    font-weight: bold;
-    font-size: 13px;
-    cursor: pointer;
-    color: #000;
 }
-
-#pageInfo {
-    color: #fff;
+.refresh-text {
     font-size: 14px;
-    padding-top: 5px;
+    text-align: center;
+    margin-top: 8px;
+    opacity: 0.85;
 }
 
-/* PROVIDER BAR */
+/* ============================================
+   PROVIDER CAROUSEL (PREMIUM GLASS)
+   ============================================ */
 .provider-row {
     display: flex;
     align-items: center;
-    gap: 10px;
-    margin: 10px 0 20px;
+    gap: 12px;
+    margin: 20px 0;
 }
 
 .scroll-btn {
-    background: var(--button-bg);
+    background: var(--accent-color);
     color: #000;
-    padding: 8px 12px;
-    border-radius: 8px;
     border: none;
+    padding: 10px 14px;
+    border-radius: 50px;
     font-size: 16px;
     font-weight: bold;
+    cursor: pointer;
+    box-shadow: var(--shadow-1);
+    transition: 0.2s ease;
+}
+
+.scroll-btn:hover {
+    transform: translateY(-3px);
+    box-shadow: var(--shadow-2);
 }
 
 .provider-scroll {
     display: flex;
-    gap: 10px;
+    gap: 12px;
     overflow-x: auto;
     flex-grow: 1;
-}
-
-.provider-scroll div {
-    background: rgba(255,255,255,0.15);
-    padding: 8px 16px;
-    border-radius: 8px;
-    border: 1px solid rgba(255,255,255,0.18);
-    backdrop-filter: blur(5px);
-    cursor: pointer;
-    white-space: nowrap;
-}
-
-.provider-scroll .active {
-    background: #00e676;
-    color: #000;
-}
-
-/* TITLE */
-.provider-title {
-    margin: 6px 0 16px;
-    padding: 0 5px;
-    font-size: 22px;
-    font-weight: bold;
-    text-align: center;
-}
-
-/* GAME GRID (3 PER ROW ALWAYS) */
-.games-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 14px;
-}
-
-/* GAME CARD */
-.game-card {
-    background: rgba(20,20,30,0.6);
-    border-radius: 12px;
-    padding: 10px;
-    backdrop-filter: blur(6px);
-    border: 1px solid rgba(255,255,255,0.10);
-    box-shadow: 0 6px 18px rgba(0,0,0,0.35);
-    transition: 0.25s ease;
-}
-
-.game-card:hover {
-    transform: translateY(-6px);
-    box-shadow: 0 10px 30px rgba(0,0,0,0.45);
-}
-
-.game-image-wrapper {
-    background: rgba(255,255,255,0.08);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    overflow: hidden;
-    box-shadow: inset 0 0 10px rgba(0,0,0,0.35);
-}
-
-.game-image {
-    max-width: 100%;
-    max-height: 100%;
-    object-fit: scale-down;
-    border-radius: 8px;
-}
-
-
-/* TITLE */
-.game-title {
-    font-size: 14px;
-    font-weight: bold;
-    margin-top: 8px;
-}
-
-/* PROVIDER TEXT */
-.game-sub {
-    font-size: 12px;
-    color: #bbb;
-}
-
-/* RTP text row */
-.rtp-info {
-    display: flex;
-    justify-content: space-between;
-    font-size: 12px;
-    margin: 5px 0;
-}
-
-/* RTP BAR */
-.progress-container {
-    width: 100%;
-    height: 8px;
-    background: rgba(255,255,255,0.20);
-    border-radius: 6px;
-}
-
-.progress-bar {
-    height: 100%;
-    border-radius: 6px;
-}
-
-/* RTP COLORS */
-.rtp-low { background: #ff4d4d; }
-.rtp-mid { background: #ffa726; }
-.rtp-high { background: #42a5f5; }
-.rtp-hot { background: #00e676; }
-
-/* MOBILE FIX */
-@media (max-width: 420px) {
-    .game-title {
-        font-size: 13px;
-    }
-}
-/* =============================== */
-/* MODERN UI UPGRADE EXTENSIONS    */
-/* (safe: does NOT override logic) */
-/* =============================== */
-
-/* Better provider bar spacing + new style */
-.provider-row {
-    margin-top: 20px !important;
-    justify-content: center;
-}
-
-/* Provider list with visible clean scroll bar */
-.provider-scroll {
-    padding: 8px;
-    gap: 12px;
+    padding-bottom: 6px;
     scrollbar-width: thin;
-    scrollbar-color: #666 rgba(255,255,255,0.1);
-    border-radius: 10px;
-    background: rgba(255,255,255,0.05);
+    scrollbar-color: #555 var(--glass-bg);
 }
-
-/* Webkit scroll bar (Chrome/Safari) */
 .provider-scroll::-webkit-scrollbar {
     height: 6px;
-}
-.provider-scroll::-webkit-scrollbar-track {
-    background: rgba(255,255,255,0.1);
-    border-radius: 10px;
 }
 .provider-scroll::-webkit-scrollbar-thumb {
     background: rgba(255,255,255,0.3);
     border-radius: 10px;
 }
 
-/* Provider pill buttons more modern */
 .provider-scroll div {
-    padding: 10px 18px !important;
+    padding: 10px 20px;
+    background: var(--glass-bg);
+    border: 1px solid var(--glass-border);
+    backdrop-filter: blur(8px);
+    border-radius: 50px;
+    cursor: pointer;
+    white-space: nowrap;
     font-size: 14px;
-    border-radius: 50px !important;
-    background: rgba(255,255,255,0.12) !important;
-    border: 1px solid rgba(255,255,255,0.18) !important;
     transition: 0.25s ease;
 }
 
 .provider-scroll div:hover {
-    background: rgba(255,255,255,0.22) !important;
+    background: var(--glass-hover);
     transform: translateY(-3px);
+    box-shadow: var(--shadow-1);
 }
 
 .provider-scroll .active {
-    background: #00e676 !important;
-    color: #000 !important;
+    background: var(--accent-color) !important;
+    color: black !important;
+    border-color: var(--accent-color);
+    font-weight: bold;
 }
 
-/* Remove top pagination completely */
-.pagination.top-pagination {
-    display: none !important;
-}
-
-/* Bottom pagination redesign */
-.pagination.bottom-pagination {
-    margin-top: 25px !important;
-}
-
-.pagination.bottom-pagination button {
-    padding: 10px 20px !important;
-    border-radius: 50px !important;
-    font-size: 14px !important;
-}
-
-/* Title spacing + center alignment */
+/* ============================================
+   PROVIDER TITLE
+   ============================================ */
 .provider-title {
-    font-size: 24px !important;
-    letter-spacing: 1px !important;
-    margin: 20px 0 10px !important;
+    font-size: 24px;
+    text-align: center;
+    margin: 10px 0 20px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
 }
 
-/* Game card redesign tweaks */
+/* ============================================
+   PREMIUM 3-CARD GRID
+   ============================================ */
+.games-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+}
+
+/* ============================================
+   GLASS GAME CARD (PREMIUM)
+   ============================================ */
 .game-card {
-    padding: 12px !important;
-    border-radius: 16px !important;
+    background: var(--glass-bg);
+    border: 1px solid var(--glass-border);
+    backdrop-filter: blur(10px);
+    border-radius: 16px;
+    padding: 12px;
+    box-shadow: var(--shadow-1);
+    transition: 0.3s ease;
+    cursor: pointer;
 }
 
-/* Image wrapper enhanced */
-.game-image-wrapper {
-    border-radius: 14px !important;
-    height: 125px !important;
-    background: rgba(255,255,255,0.06) !important;
-}
-
-/* Card shadow upgrade */
 .game-card:hover {
-    box-shadow: 0 12px 32px rgba(0,0,0,0.55) !important;
+    transform: translateY(-6px);
+    box-shadow: var(--shadow-2);
+    background: rgba(255,255,255,0.12);
 }
 
-/* Card title upgrade */
+/* ============================================
+   PERFECT-FIT IMAGE WRAPPER
+   ============================================ */
+.game-image-wrapper {
+    width: 100%;
+    height: 130px;
+    background: rgba(255,255,255,0.06);
+    border-radius: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 6px;
+    overflow: hidden;
+    box-shadow: inset 0 0 12px rgba(0,0,0,0.35);
+}
+
+.game-image {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: scale-down;
+}
+
+/* ============================================
+   GAME TEXT
+   ============================================ */
 .game-title {
-    margin-top: 10px !important;
-    font-size: 15px !important;
-    font-weight: 700 !important;
+    font-size: 15px;
+    font-weight: 700;
+    margin-top: 10px;
+}
+.game-sub {
+    font-size: 12px;
+    opacity: 0.75;
 }
 
-/* RTP section upgrade */
+/* ============================================
+   RTP DISPLAY
+   ============================================ */
 .rtp-info {
-    margin: 8px 0 !important;
-    font-size: 13px !important;
+    display: flex;
+    justify-content: space-between;
+    margin: 6px 0;
+    font-size: 13px;
 }
 
-/* Make progress bar smoother */
 .progress-container {
-    height: 10px !important;
-    border-radius: 10px !important;
+    width: 100%;
+    height: 10px;
+    background: rgba(255,255,255,0.18);
+    border-radius: 10px;
 }
-
 .progress-bar {
-    border-radius: 10px !important;
+    height: 100%;
+    border-radius: 10px;
 }
 
+/* RTP COLORS */
+.rtp-low  { background: #ff4d4d; }
+.rtp-mid  { background: #ffa726; }
+.rtp-high { background: #42a5f5; }
+.rtp-hot  { background: #00e676; }
 
+/* ============================================
+   PAGINATION (BOTTOM ONLY)
+   ============================================ */
+.pagination {
+    display: flex;
+    justify-content: center;
+    gap: 18px;
+    margin: 25px 0 10px;
+}
 
+.pagination button {
+    padding: 10px 22px;
+    border-radius: 50px;
+    background: var(--accent-color);
+    border: none;
+    font-weight: bold;
+    cursor: pointer;
+    color: #000;
+    font-size: 14px;
+    box-shadow: var(--shadow-1);
+}
+
+.pagination button:hover {
+    box-shadow: var(--shadow-2);
+    transform: translateY(-2px);
+}
+
+#pageInfo {
+    font-size: 14px;
+    padding-top: 5px;
+    opacity: 0.9;
+}
+
+/* ============================================
+   MOBILE RESPONSIVE OPTIMIZATION
+   ============================================ */
+@media (max-width: 420px) {
+    .games-grid {
+        gap: 12px;
+    }
+    .game-image-wrapper {
+        height: 110px;
+    }
+    .game-title {
+        font-size: 14px;
+    }
+}
