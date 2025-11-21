@@ -212,5 +212,123 @@ html, body {
         font-size: 13px;
     }
 }
+/* =============================== */
+/* MODERN UI UPGRADE EXTENSIONS    */
+/* (safe: does NOT override logic) */
+/* =============================== */
+
+/* Better provider bar spacing + new style */
+.provider-row {
+    margin-top: 20px !important;
+    justify-content: center;
+}
+
+/* Provider list with visible clean scroll bar */
+.provider-scroll {
+    padding: 8px;
+    gap: 12px;
+    scrollbar-width: thin;
+    scrollbar-color: #666 rgba(255,255,255,0.1);
+    border-radius: 10px;
+    background: rgba(255,255,255,0.05);
+}
+
+/* Webkit scroll bar (Chrome/Safari) */
+.provider-scroll::-webkit-scrollbar {
+    height: 6px;
+}
+.provider-scroll::-webkit-scrollbar-track {
+    background: rgba(255,255,255,0.1);
+    border-radius: 10px;
+}
+.provider-scroll::-webkit-scrollbar-thumb {
+    background: rgba(255,255,255,0.3);
+    border-radius: 10px;
+}
+
+/* Provider pill buttons more modern */
+.provider-scroll div {
+    padding: 10px 18px !important;
+    font-size: 14px;
+    border-radius: 50px !important;
+    background: rgba(255,255,255,0.12) !important;
+    border: 1px solid rgba(255,255,255,0.18) !important;
+    transition: 0.25s ease;
+}
+
+.provider-scroll div:hover {
+    background: rgba(255,255,255,0.22) !important;
+    transform: translateY(-3px);
+}
+
+.provider-scroll .active {
+    background: #00e676 !important;
+    color: #000 !important;
+}
+
+/* Remove top pagination completely */
+.pagination.top-pagination {
+    display: none !important;
+}
+
+/* Bottom pagination redesign */
+.pagination.bottom-pagination {
+    margin-top: 25px !important;
+}
+
+.pagination.bottom-pagination button {
+    padding: 10px 20px !important;
+    border-radius: 50px !important;
+    font-size: 14px !important;
+}
+
+/* Title spacing + center alignment */
+.provider-title {
+    font-size: 24px !important;
+    letter-spacing: 1px !important;
+    margin: 20px 0 10px !important;
+}
+
+/* Game card redesign tweaks */
+.game-card {
+    padding: 12px !important;
+    border-radius: 16px !important;
+}
+
+/* Image wrapper enhanced */
+.game-image-wrapper {
+    border-radius: 14px !important;
+    height: 125px !important;
+    background: rgba(255,255,255,0.06) !important;
+}
+
+/* Card shadow upgrade */
+.game-card:hover {
+    box-shadow: 0 12px 32px rgba(0,0,0,0.55) !important;
+}
+
+/* Card title upgrade */
+.game-title {
+    margin-top: 10px !important;
+    font-size: 15px !important;
+    font-weight: 700 !important;
+}
+
+/* RTP section upgrade */
+.rtp-info {
+    margin: 8px 0 !important;
+    font-size: 13px !important;
+}
+
+/* Make progress bar smoother */
+.progress-container {
+    height: 10px !important;
+    border-radius: 10px !important;
+}
+
+.progress-bar {
+    border-radius: 10px !important;
+}
+
 
 
