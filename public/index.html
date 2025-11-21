@@ -11,33 +11,26 @@
 
 <div class="rtp-wrapper">
 
+    <!-- HEADER + COUNTDOWN -->
     <div class="rtp-header">
         <img id="rtpHeaderImg" src="" alt="RTP Header" />
         <div class="rtp-refresh-bar"><div id="countdownBar"></div></div>
         <div class="refresh-text">Next update in: <span id="refreshTime">--</span></div>
     </div>
 
+    <!-- CLEAN PROVIDER SCROLL -->
     <div class="provider-row-clean">
         <div class="provider-scroll-clean" id="providerList"></div>
     </div>
 
-
-    <div class="provider-title" id="selectedProviderName">Select Provider</div>
-
-    <!-- FIXED PAGINATION BAR -->
-    <div class="pagination bottom-pagination">
-        <button id="prevPage">Prev</button>
-        <span id="pageInfo">Page 1 / 1</span>
-        <button id="nextPage">Next</button>
-    </div>
-
-
-    <!-- GAME GRID WITH MOCK CARDS -->
+    <!-- GAME GRID -->
     <div class="games-grid" id="gamesGrid">
 
+        <!-- MOCK CARDS (unchanged) -->
         <div class="game-card">
             <div class="game-image-wrapper">
-               <img class="game-image" src="https://static.gwvkyk.com/games/jili/77.png"></div>
+               <img class="game-image" src="https://static.gwvkyk.com/games/jili/77.png">
+            </div>
             <div class="game-title">Aztec Gems</div>
             <div class="game-sub">Pragmatic Play</div>
             <div class="rtp-info"><span>RTP</span><span>92%</span></div>
@@ -91,9 +84,8 @@
 
     </div>
 </div>
-
-
-    <div class="pagination">
+    
+    <div class="pagination bottom-pagination">
         <button id="prevPage">Prev</button>
         <span id="pageInfo">Page 1 / 1</span>
         <button id="nextPage">Next</button>
@@ -114,6 +106,7 @@ window.onload = sendHeight;
 
 </body>
 </html>
+
 
 
 
