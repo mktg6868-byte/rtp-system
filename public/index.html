@@ -4,23 +4,29 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="stylesheet" href="style.css" />
-    <title>Game RTP</title>
+    <title>RTP Monitor</title>
 </head>
 
 <body>
 
 <div class="rtp-wrapper">
 
-    <!-- HEADER + COUNTDOWN -->
-    <div class="rtp-header">
-        <img id="rtpHeaderImg" src="" alt="RTP Header" />
-        <div class="rtp-refresh-bar"><div id="countdownBar"></div></div>
-        <div class="refresh-text">Next update in: <span id="refreshTime">--</span></div>
-    </div>
+    <!-- HEADER -->
+    <header class="rtp-header">
+        <img id="rtpHeaderImg" src="" class="rtp-banner" alt="RTP Header">
 
-    <!-- CLEAN PROVIDER SCROLL -->
-    <div class="provider-row-clean">
-        <div class="provider-scroll-clean" id="providerList"></div>
+        <div class="rtp-progress">
+            <div id="countdownBar"></div>
+        </div>
+
+        <div class="rtp-count-label">
+            Next update in: <span id="refreshTime">--</span>
+        </div>
+    </header>
+
+    <!-- PROVIDER SELECTOR -->
+    <div class="provider-container">
+        <div class="provider-scroll" id="providerList"></div>
     </div>
 
     <!-- GAME GRID -->
@@ -85,10 +91,10 @@
     </div>
 </div>
     
-    <div class="pagination bottom-pagination">
-        <button id="prevPage">Prev</button>
-        <span id="pageInfo">Page 1 / 1</span>
-        <button id="nextPage">Next</button>
+    <div class="pagination">
+        <button id="prevPage" class="page-btn">← Prev</button>
+        <span id="pageInfo" class="page-info">Page 1 / 1</span>
+        <button id="nextPage" class="page-btn">Next →</button>
     </div>
 
 </div>
@@ -106,6 +112,7 @@ window.onload = sendHeight;
 
 </body>
 </html>
+
 
 
 
