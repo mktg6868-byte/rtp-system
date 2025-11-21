@@ -9,113 +9,134 @@
 
 <body>
 
+<!-- MAIN WRAPPER (transparent so your casino background is visible) -->
 <div class="rtp-wrapper">
 
-    <!-- HEADER -->
+    <!-- ========================= -->
+    <!--        HEADER AREA        -->
+    <!-- ========================= -->
     <header class="rtp-header">
-        <img id="rtpHeaderImg" src="" class="rtp-banner" alt="RTP Header">
+        <img id="rtpHeaderImg" src="" alt="RTP Header" class="rtp-header-img"/>
 
-        <div class="rtp-progress">
-            <div id="countdownBar"></div>
+        <!-- Countdown bar -->
+        <div class="rtp-bar-container">
+            <div id="countdownBar" class="rtp-bar-fill"></div>
         </div>
 
-        <div class="rtp-count-label">
+        <div class="rtp-count-text">
             Next update in: <span id="refreshTime">--</span>
         </div>
     </header>
 
-    <!-- PROVIDER SELECTOR -->
-    <div class="provider-container">
-        <div class="provider-scroll" id="providerList"></div>
-    </div>
 
-    <!-- GAME GRID -->
-    <div class="games-grid" id="gamesGrid">
+
+    <!-- ========================= -->
+    <!--  PROVIDER SLIDE SELECTOR  -->
+    <!-- ========================= -->
+    <section class="provider-section">
+        <div class="provider-scroll-clean" id="providerList"></div>
+    </section>
+
+
+
+    <!-- ========================= -->
+    <!--        GAME GRID          -->
+    <!-- ========================= -->
+    <section class="game-section">
+        <div class="games-grid" id="gamesGrid"></div>
 
         <!-- MOCK CARDS (unchanged) -->
-        <div class="game-card">
-            <div class="game-image-wrapper">
-               <img class="game-image" src="https://static.gwvkyk.com/games/jili/77.png">
+                <div class="game-card">
+                    <div class="game-image-wrapper">
+                       <img class="game-image" src="https://static.gwvkyk.com/games/jili/77.png">
+                    </div>
+                    <div class="game-title">Aztec Gems</div>
+                    <div class="game-sub">Pragmatic Play</div>
+                    <div class="rtp-info"><span>RTP</span><span>92%</span></div>
+                    <div class="progress-container"><div class="progress-bar rtp-hot" style="width: 92%"></div></div>
+                </div>
+        
+                <div class="game-card">
+                    <div class="game-image-wrapper">
+                       <img class="game-image" src="https://static.gwvkyk.com/games/jili/49.png"></div>
+                    <div class="game-title">Gates of Olympus</div>
+                    <div class="game-sub">Pragmatic Play</div>
+                    <div class="rtp-info"><span>RTP</span><span>58%</span></div>
+                    <div class="progress-container"><div class="progress-bar rtp-mid" style="width: 58%"></div></div>
+                </div>
+        
+                <div class="game-card">
+                    <div class="game-image-wrapper">
+                       <img class="game-image" src="https://static.gwvkyk.com/games/jili/103.png"></div>
+                    <div class="game-title">Starlight Princess</div>
+                    <div class="game-sub">Pragmatic Play</div>
+                    <div class="rtp-info"><span>RTP</span><span>48%</span></div>
+                    <div class="progress-container"><div class="progress-bar rtp-mid" style="width: 48%"></div></div>
+                </div>
+        
+                <div class="game-card">
+                    <div class="game-image-wrapper">
+                      <img class="game-image" src="https://static.gwvkyk.com/games/jili/545.png"></div>
+                    <div class="game-title">Sweet Bonanza</div>
+                    <div class="game-sub">Pragmatic Play</div>
+                    <div class="rtp-info"><span>RTP</span><span>32%</span></div>
+                    <div class="progress-container"><div class="progress-bar rtp-low" style="width: 32%"></div></div>
+                </div>
+        
+                <div class="game-card">
+                    <div class="game-image-wrapper">
+                       <img class="game-image" src="https://static.gwvkyk.com/games/jili/541.png"></div>
+                    <div class="game-title">Sugar Rush</div>
+                    <div class="game-sub">Pragmatic Play</div>
+                    <div class="rtp-info"><span>RTP</span><span>85%</span></div>
+                    <div class="progress-container"><div class="progress-bar rtp-high" style="width: 85%"></div></div>
+                </div>
+        
+                <div class="game-card">
+                    <div class="game-image-wrapper">
+                       <img class="game-image" src="https://static.gwvkyk.com/games/jili/403.png"></div>
+                    <div class="game-title">Wild West Gold</div>
+                    <div class="game-sub">Pragmatic Play</div>
+                    <div class="rtp-info"><span>RTP</span><span>67%</span></div>
+                    <div class="progress-container"><div class="progress-bar rtp-high" style="width: 67%"></div></div>
+                </div>
+        
             </div>
-            <div class="game-title">Aztec Gems</div>
-            <div class="game-sub">Pragmatic Play</div>
-            <div class="rtp-info"><span>RTP</span><span>92%</span></div>
-            <div class="progress-container"><div class="progress-bar rtp-hot" style="width: 92%"></div></div>
         </div>
+    </section>
 
-        <div class="game-card">
-            <div class="game-image-wrapper">
-               <img class="game-image" src="https://static.gwvkyk.com/games/jili/49.png"></div>
-            <div class="game-title">Gates of Olympus</div>
-            <div class="game-sub">Pragmatic Play</div>
-            <div class="rtp-info"><span>RTP</span><span>58%</span></div>
-            <div class="progress-container"><div class="progress-bar rtp-mid" style="width: 58%"></div></div>
-        </div>
 
-        <div class="game-card">
-            <div class="game-image-wrapper">
-               <img class="game-image" src="https://static.gwvkyk.com/games/jili/103.png"></div>
-            <div class="game-title">Starlight Princess</div>
-            <div class="game-sub">Pragmatic Play</div>
-            <div class="rtp-info"><span>RTP</span><span>48%</span></div>
-            <div class="progress-container"><div class="progress-bar rtp-mid" style="width: 48%"></div></div>
-        </div>
 
-        <div class="game-card">
-            <div class="game-image-wrapper">
-              <img class="game-image" src="https://static.gwvkyk.com/games/jili/545.png"></div>
-            <div class="game-title">Sweet Bonanza</div>
-            <div class="game-sub">Pragmatic Play</div>
-            <div class="rtp-info"><span>RTP</span><span>32%</span></div>
-            <div class="progress-container"><div class="progress-bar rtp-low" style="width: 32%"></div></div>
-        </div>
-
-        <div class="game-card">
-            <div class="game-image-wrapper">
-               <img class="game-image" src="https://static.gwvkyk.com/games/jili/541.png"></div>
-            <div class="game-title">Sugar Rush</div>
-            <div class="game-sub">Pragmatic Play</div>
-            <div class="rtp-info"><span>RTP</span><span>85%</span></div>
-            <div class="progress-container"><div class="progress-bar rtp-high" style="width: 85%"></div></div>
-        </div>
-
-        <div class="game-card">
-            <div class="game-image-wrapper">
-               <img class="game-image" src="https://static.gwvkyk.com/games/jili/403.png"></div>
-            <div class="game-title">Wild West Gold</div>
-            <div class="game-sub">Pragmatic Play</div>
-            <div class="rtp-info"><span>RTP</span><span>67%</span></div>
-            <div class="progress-container"><div class="progress-bar rtp-high" style="width: 67%"></div></div>
-        </div>
-
-    </div>
-</div>
-    
-    <div class="pagination">
+    <!-- ========================= -->
+    <!--         PAGINATION         -->
+    <!-- ========================= -->
+    <section class="pagination-section">
         <button id="prevPage" class="page-btn">← Prev</button>
         <span id="pageInfo" class="page-info">Page 1 / 1</span>
         <button id="nextPage" class="page-btn">Next →</button>
-    </div>
+    </section>
 
 </div>
 
-<script src="app.js"></script>
 
+
+<!-- ========================= -->
+<!--   RESPONSIVE IFRAME FIX   -->
+<!-- ========================= -->
 <script>
 function sendHeight() {
     const height = document.body.scrollHeight;
     window.parent.postMessage({ type: 'setIframeHeight', height }, '*');
 }
 
-// Automatically send height changes
 new ResizeObserver(sendHeight).observe(document.body);
 window.onload = sendHeight;
 </script>
 
+<script src="app.js"></script>
 
 </body>
 </html>
-
 
 
 
