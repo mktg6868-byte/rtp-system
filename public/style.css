@@ -1,295 +1,208 @@
-/* ===========================================================
-   ROOT VARIABLES (adjust these to change global color theme)
-   =========================================================== */
+/* ROOT THEME */
 :root {
-    --text-color: #ffffff;
-    --accent-color: #00e676;
-    --glass-bg: rgba(255,255,255,0.08);
-    --glass-border: rgba(255,255,255,0.18);
-    --glass-hover: rgba(255,255,255,0.22);
-    --shadow-1: 0 6px 18px rgba(0,0,0,0.35);
-    --shadow-2: 0 10px 30px rgba(0,0,0,0.45);
+    --accent: #00e676;
+    --text: #ffffff;
+    --glass: rgba(255,255,255,0.10);
+    --border: rgba(255,255,255,0.18);
+    --shadow: rgba(0,0,0,0.45);
 }
 
-/* ============================================
-   GLOBAL BASE
-   ============================================ */
 html, body {
     margin: 0;
     padding: 0;
-    background: transparent !important;
-    font-family: "Inter", Arial, sans-serif;
-    color: var(--text-color);
+    font-family: Inter, Arial, sans-serif;
+    color: var(--text);
+    background: transparent;
     overflow-x: hidden;
 }
 
+/* WRAPPER */
 .rtp-wrapper {
     width: 100%;
-    padding: 14px;
+    padding: 10px 12px 30px;
     box-sizing: border-box;
-    animation: fadeIn 0.35s ease;
-    background: transparent !important;
 }
 
-@keyframes fadeIn {
-    from { opacity: 0; transform: translateY(10px); }
-    to { opacity: 1; transform: translateY(0); }
+/* HEADER */
+.rtp-header {
+    text-align: center;
 }
 
-/* ============================================
-   HEADER IMAGE
-   ============================================ */
-.rtp-header img {
+.rtp-banner {
     width: 100%;
     border-radius: 14px;
-    box-shadow: var(--shadow-1);
+    box-shadow: 0 6px 20px rgba(0,0,0,0.40);
 }
 
-/* COUNTDOWN BAR */
-.rtp-refresh-bar {
-    margin-top: 12px;
-    background: rgba(255,255,255,0.12);
-    height: 7px;
+.rtp-progress {
+    width: 100%;
+    height: 8px;
+    background: rgba(255,255,255,0.15);
     border-radius: 6px;
+    margin: 14px 0 6px;
 }
+
 #countdownBar {
     height: 100%;
-    background: linear-gradient(90deg, #4cd964, #2ecc71);
+    width: 100%;
+    background: var(--accent);
     border-radius: 6px;
+    transition: width 0.3s linear;
 }
-.refresh-text {
+
+.rtp-count-label {
     font-size: 14px;
-    text-align: center;
-    margin-top: 8px;
     opacity: 0.85;
 }
 
-/* ============================================
-   PROVIDER CAROUSEL (PREMIUM GLASS)
-   ============================================ */
-/* CLEAN MODERN PROVIDER SELECTOR */
-.provider-row-clean {
-    width: 100%;
-    display: flex;
-    justify-content: center;
-    margin: 20px 0 10px;
+/* PROVIDER SELECTOR */
+.provider-container {
+    margin: 22px 0 16px;
 }
 
-/* HORIZONTAL SCROLL AREA */
-.provider-scroll-clean {
+.provider-scroll {
     display: flex;
     gap: 12px;
     overflow-x: auto;
-    padding: 10px 4px;
-    max-width: 92%;
-    scrollbar-width: none;          /* Firefox */
-    -ms-overflow-style: none;       /* IE/Edge */
-}
-.provider-scroll-clean::-webkit-scrollbar {
-    display: none;                  /* Chrome/Safari */
+    padding: 6px 4px;
+    scrollbar-width: none;
 }
 
-/* PROVIDER GLASS PILLS */
-.provider-scroll-clean div {
+.provider-scroll::-webkit-scrollbar { display: none; }
+
+.provider-scroll div {
     padding: 10px 22px;
-    background: rgba(255,255,255,0.12);
-    border: 1px solid rgba(255,255,255,0.22);
-    backdrop-filter: blur(8px);
     border-radius: 40px;
+    background: var(--glass);
+    border: 1px solid var(--border);
+    backdrop-filter: blur(8px);
     font-size: 14px;
     white-space: nowrap;
-    color: #fff;
-    font-weight: 500;
     cursor: pointer;
     transition: 0.25s ease;
+    box-shadow: 0 4px 12px var(--shadow);
 }
 
-/* HOVER EFFECT */
-.provider-scroll-clean div:hover {
-    background: rgba(255,255,255,0.20);
+.provider-scroll div:hover {
+    background: rgba(255,255,255,0.18);
     transform: translateY(-3px);
 }
 
-/* ACTIVE ITEM */
-.provider-scroll-clean .active {
-    background: #00e676;
+.provider-scroll .active {
+    background: var(--accent);
     color: #000;
+    border-color: var(--accent);
     font-weight: 700;
-    border-color: #00e676;
-    box-shadow: 0 6px 20px rgba(0,230,118,0.35);
+    box-shadow: 0 0 18px rgba(0,230,118,0.45);
 }
 
-/* FADE-IN EDGES FOR CLEAN UX */
-.provider-row-clean {
-    position: relative;
-}
-.provider-row-clean:before,
-.provider-row-clean:after {
-    content: "";
-    position: absolute;
-    top: 0;
-    height: 100%;
-    width: 40px;
-    pointer-events: none;
-}
-
-.provider-row-clean:before {
-    left: 0;
-    background: linear-gradient(to right, rgba(0,0,0,0.7), transparent);
-}
-.provider-row-clean:after {
-    right: 0;
-    background: linear-gradient(to left, rgba(0,0,0,0.7), transparent);
-}
-
-/* ============================================
-   PROVIDER TITLE
-   ============================================ */
-.provider-title {
-    font-size: 24px;
-    text-align: center;
-    margin: 10px 0 20px;
-    font-weight: 700;
-    letter-spacing: 0.5px;
-}
-
-/* ============================================
-   PREMIUM 3-CARD GRID
-   ============================================ */
+/* GAME GRID */
 .games-grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    gap: 16px;
+    gap: 14px;
 }
 
-/* ============================================
-   GLASS GAME CARD (PREMIUM)
-   ============================================ */
+/* GAME CARD */
 .game-card {
-    background: var(--glass-bg);
-    border: 1px solid var(--glass-border);
-    backdrop-filter: blur(10px);
-    border-radius: 16px;
-    padding: 12px;
-    box-shadow: var(--shadow-1);
-    transition: 0.3s ease;
-    cursor: pointer;
+    background: rgba(255,255,255,0.07);
+    border: 1px solid rgba(255,255,255,0.12);
+    padding: 10px;
+    border-radius: 12px;
+    backdrop-filter: blur(8px);
+    box-shadow: 0 6px 20px var(--shadow);
+    transition: 0.25s ease;
 }
 
 .game-card:hover {
-    transform: translateY(-6px);
-    box-shadow: var(--shadow-2);
-    background: rgba(255,255,255,0.12);
+    transform: translateY(-5px);
+    box-shadow: 0 10px 24px var(--shadow);
 }
 
-/* ============================================
-   PERFECT-FIT IMAGE WRAPPER
-   ============================================ */
 .game-image-wrapper {
-    width: 100%;
-    height: 130px;
-    background: rgba(255,255,255,0.06);
-    border-radius: 14px;
+    background: rgba(255,255,255,0.08);
+    height: 85px;
+    border-radius: 8px;
     display: flex;
-    align-items: center;
     justify-content: center;
-    padding: 6px;
+    align-items: center;
     overflow: hidden;
-    box-shadow: inset 0 0 12px rgba(0,0,0,0.35);
 }
 
 .game-image {
-    max-width: 100%;
-    max-height: 100%;
-    object-fit: scale-down;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
 }
 
-/* ============================================
-   GAME TEXT
-   ============================================ */
 .game-title {
-    font-size: 15px;
+    font-size: 13px;
+    margin-top: 8px;
     font-weight: 700;
-    margin-top: 10px;
-}
-.game-sub {
-    font-size: 12px;
-    opacity: 0.75;
 }
 
-/* ============================================
-   RTP DISPLAY
-   ============================================ */
+.game-sub {
+    font-size: 11px;
+    opacity: 0.8;
+    margin-bottom: 4px;
+}
+
 .rtp-info {
     display: flex;
     justify-content: space-between;
-    margin: 6px 0;
-    font-size: 13px;
+    font-size: 11px;
 }
 
 .progress-container {
-    width: 100%;
-    height: 10px;
-    background: rgba(255,255,255,0.18);
-    border-radius: 10px;
+    height: 7px;
+    border-radius: 6px;
+    background: rgba(255,255,255,0.15);
+    margin-top: 4px;
 }
+
 .progress-bar {
     height: 100%;
-    border-radius: 10px;
+    border-radius: 6px;
 }
 
-/* RTP COLORS */
-.rtp-low  { background: #ff4d4d; }
-.rtp-mid  { background: #ffa726; }
+.rtp-low { background: #ff4d4d; }
+.rtp-mid { background: #ffa726; }
 .rtp-high { background: #42a5f5; }
-.rtp-hot  { background: #00e676; }
+.rtp-hot { background: #00e676; }
 
-/* ============================================
-   PAGINATION (BOTTOM ONLY)
-   ============================================ */
+/* PAGINATION */
 .pagination {
+    text-align: center;
+    margin-top: 28px;
     display: flex;
     justify-content: center;
-    gap: 18px;
-    margin: 25px 0 10px;
+    align-items: center;
+    gap: 14px;
 }
 
-.pagination button {
-    padding: 10px 22px;
-    border-radius: 50px;
-    background: var(--accent-color);
+.page-btn {
+    padding: 10px 20px;
+    background: var(--accent);
+    border-radius: 40px;
     border: none;
-    font-weight: bold;
-    cursor: pointer;
+    font-weight: 700;
     color: #000;
-    font-size: 14px;
-    box-shadow: var(--shadow-1);
+    cursor: pointer;
+    box-shadow: 0 4px 16px rgba(0,230,118,0.40);
+    transition: 0.25s ease;
 }
 
-.pagination button:hover {
-    box-shadow: var(--shadow-2);
-    transform: translateY(-2px);
+.page-btn:hover {
+    transform: translateY(-3px);
 }
 
-#pageInfo {
-    font-size: 14px;
-    padding-top: 5px;
-    opacity: 0.9;
+.page-info {
+    font-size: 13px;
+    opacity: 0.85;
 }
 
-/* ============================================
-   MOBILE RESPONSIVE OPTIMIZATION
-   ============================================ */
 @media (max-width: 420px) {
-    .games-grid {
-        gap: 12px;
-    }
-    .game-image-wrapper {
-        height: 110px;
-    }
-    .game-title {
-        font-size: 14px;
-    }
+    .games-grid { gap: 10px; }
+    .game-title { font-size: 12px; }
+    .game-sub { font-size: 10px; }
 }
-
-
