@@ -1,6 +1,6 @@
 :root {
     --text-color: #ffffff;
-    --base-color: #0e1220;
+    --base-color: transparent; /* competitor logic */
     --accent-color: #00b33c;
     --button-bg: #00b33c;
     --button-text: #ffffff;
@@ -8,14 +8,15 @@
     --progress-bg: rgba(255,255,255,0.2);
 }
 
-body {
+html, body {
     margin: 0;
-    background: var(--base-color);
+    background: transparent !important;
     font-family: Arial, sans-serif;
     color: var(--text-color);
 }
 
 .rtp-wrapper {
+    background: transparent !important;
     width: 100%;
     max-width: 900px;
     margin: auto;
@@ -153,3 +154,4 @@ body {
 #pageInfo {
     margin: 0 10px;
 }
+
