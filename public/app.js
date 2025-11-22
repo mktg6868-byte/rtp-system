@@ -1,302 +1,221 @@
 /******************************************************
- * RTP APP — competitor logic, modern JS, custom UI
- * - Always uses API (no mock mode)
- * - Mirrors key behaviors from original game-rtp.js
- * - Uses your IDs/classes: rtpHeaderImg, providerList,
- *   gamesGrid, prevPage, nextPage, pageInfo, countdownBar,
- *   refreshTime.
+ * FULL RTP ENGINE — Mirrors competitor behavior
+ * Modern clean JS + your UI
  ******************************************************/
 
-// ====== DOM ELEMENTS ======
+// DOM ELEMENTS
 const headerImgEl      = document.getElementById('rtpHeaderImg');
 const countdownBarEl   = document.getElementById('countdownBar');
 const refreshTimeEl    = document.getElementById('refreshTime');
-
 const providerListEl   = document.getElementById('providerList');
 const providerTitleEl  = document.getElementById('selectedProviderName');
-
 const gamesGridEl      = document.getElementById('gamesGrid');
-
 const prevPageBtn      = document.getElementById('prevPage');
 const nextPageBtn      = document.getElementById('nextPage');
 const pageInfoEl       = document.getElementById('pageInfo');
 
-// ====== STATE ======
-let rtpData = null;              // full data from API
-let gameRTPData = {};            // provider -> {displayName, data}
-let currentProviderKey = null;   // provider code, e.g. "PG"
-let currentGameList = [];        // array of games for selected provider
+// STATE
+let gameRTPData = {};
+let currentProviderKey = null;
+let currentGameList = [];
 let currentPage = 1;
 let totalPages = 1;
 
 const ITEMS_PER_PAGE = 60;
 
-// ====== UTILS ======
-function postForm(url, formObj) {
-    const body = Object.entries(formObj)
-        .map(([k, v]) => encodeURIComponent(k) + '=' + encodeURIComponent(v))
-        .join('&');
-
-    return fetch(url, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'
-        },
-        body
-    }).then(res => {
-        if (!res.ok) {
-            throw new Error('Network error: ' + res.status);
-        }
-        return res.json();
-    });
+// UTIL — POST form data
+function postForm(url, data) {
+  return fetch(url, {
+    method: "POST",
+    headers: { "Content-Type": "application/x-www-form-urlencoded" },
+    body: new URLSearchParams(data),
+  }).then((res) => res.json());
 }
 
-function safeSendHeight() {
-    if (typeof window.sendHeight === 'function') {
-        setTimeout(window.sendHeight, 30);
-    }
-}
-
-// ====== MAIN LOAD ======
+// Load Main RTP Data
 function loadRTPData() {
-    postForm('get_data.asp', { whichProvider: 'ALL' })
-        .then(response => {
-            if (response.status === 'success') {
-                setupRTP(response);
-            } else {
-                showError(response?.data?.message || 'Failed to load RTP data.');
-            }
-        })
-        .catch(err => {
-            console.error(err);
-            showError('Something went wrong when loading RTP data.');
-        });
+  postForm("get_data.asp", { whichProvider: "ALL" })
+    .then((response) => {
+      if (response.status === "success") {
+        initializeRTP(response);
+      } else {
+        showError(response?.data?.message || "Failed to load RTP data.");
+      }
+    })
+    .catch(() => showError("Network error."));
 }
 
-// ====== ERROR DISPLAY ======
 function showError(msg) {
-    providerTitleEl.textContent = 'Failed to load RTP data';
-    gamesGridEl.innerHTML = `
-        <div class="no-data" style="text-align:center;margin-top:20px;
-             color:#fff;text-shadow:0 0 4px #000;">
-            ${msg}
-        </div>
-    `;
-    safeSendHeight();
+  providerTitleEl.textContent = "Failed to load RTP data";
+  gamesGridEl.innerHTML = `
+    <div style="text-align:center;margin-top:20px;color:white;text-shadow:0 0 4px black;">
+      ${msg}
+    </div>
+  `;
+  sendHeight();
 }
 
-// ====== INITIALIZE FROM API RESPONSE ======
-function setupRTP(apiResponse) {
-    rtpData = apiResponse.data;
-    const currentTimestamp = apiResponse.timestamp;
+// Initialize from API
+function initializeRTP(res) {
+  const data = res.data;
+  const timestamp = res.timestamp;
 
-    if (!rtpData) {
-        showError('Invalid RTP data.');
-        return;
-    }
+  // Header image
+  headerImgEl.src = data.headerImageURL;
 
-    // 1) Header image
-    if (rtpData.headerImageURL) {
-        headerImgEl.src = rtpData.headerImageURL;
-    }
+  // Styling from API
+  applyCssVariables(data.cssStyle);
 
-    // 2) Apply cssStyle from backend
-    const css = rtpData.cssStyle || {};
-    const rootStyle = document.documentElement.style;
-    if (css.textColor)        rootStyle.setProperty('--text-color', css.textColor);
-    if (css.baseColor)        rootStyle.setProperty('--accent-color', css.baseColor);
-    if (css.outlineColor)     rootStyle.setProperty('--outline-color', css.outlineColor);
-    if (css.buttonBgColor)    rootStyle.setProperty('--button-bg', css.buttonBgColor);
-    if (css.buttonTextColor)  rootStyle.setProperty('--button-text', css.buttonTextColor);
-    if (css.progressbarBgColor) rootStyle.setProperty('--progress-bg', css.progressbarBgColor);
+  // Countdown logic
+  initCountdown(data.autoRTPminute, data.autoRTPlastTime, timestamp);
 
-    // 3) Countdown timer
-    initCountdown(rtpData.autoRTPminute, rtpData.autoRTPlastTime, currentTimestamp);
-
-    // 4) Providers + games
-    gameRTPData = rtpData.gameRTPData || {};
-    renderProviderList();
-
-    safeSendHeight();
+  // Provider + game data
+  gameRTPData = data.gameRTPData;
+  renderProviderList();
 }
 
-// ====== COUNTDOWN LOGIC ======
-function initCountdown(autoRTPminute, autoRTPlastTime, currentTimestamp) {
-    if (!autoRTPminute || !autoRTPlastTime || !currentTimestamp) {
-        refreshTimeEl.textContent = '--';
-        return;
-    }
-
-    const totalSec = autoRTPminute * 60;
-    let remainingSec = (autoRTPlastTime + totalSec) - currentTimestamp;
-
-    const hours = Math.floor(totalSec / 3600);
-    const minutes = Math.floor((totalSec % 3600) / 60);
-    let txt = '';
-    if (hours > 0) {
-        txt += hours + ' hour' + (hours > 1 ? 's' : '');
-    }
-    if (minutes > 0) {
-        if (txt) txt += ' ';
-        txt += minutes + ' minute' + (minutes > 1 ? 's' : '');
-    }
-    refreshTimeEl.textContent = txt || (autoRTPminute + ' minutes');
-
-    function updateBar() {
-        const percent = Math.max(0, Math.min(100, (remainingSec / totalSec) * 100));
-        countdownBarEl.style.width = percent + '%';
-
-        if (remainingSec <= 0) {
-            clearInterval(timer);
-            countdownBarEl.style.width = '0%';
-            location.reload(true);
-        }
-        remainingSec--;
-    }
-
-    updateBar();
-    const timer = setInterval(updateBar, 1000);
+function applyCssVariables(style) {
+  if (!style) return;
+  const root = document.documentElement.style;
+  if (style.textColor) root.setProperty("--text-color", style.textColor);
+  if (style.baseColor) root.setProperty("--accent-color", style.baseColor);
+  if (style.outlineColor) root.setProperty("--outline-color", style.outlineColor);
+  if (style.buttonBgColor) root.setProperty("--button-bg", style.buttonBgColor);
+  if (style.buttonTextColor) root.setProperty("--button-text", style.buttonTextColor);
+  if (style.progressbarBgColor) root.setProperty("--progress-bg", style.progressbarBgColor);
 }
 
-// ====== PROVIDER LIST ======
+// Countdown
+function initCountdown(minutes, lastTime, timestamp) {
+  const total = minutes * 60;
+  let remaining = lastTime + total - timestamp;
+
+  refreshTimeEl.textContent = `${minutes} minutes`;
+
+  const timer = setInterval(() => {
+    const percent = Math.max(0, Math.min(100, (remaining / total) * 100));
+    countdownBarEl.style.width = percent + "%";
+
+    if (remaining <= 0) {
+      clearInterval(timer);
+      location.reload(true);
+    }
+
+    remaining--;
+  }, 1000);
+}
+
+// Provider List
 function renderProviderList() {
-    providerListEl.innerHTML = '';
+  providerListEl.innerHTML = "";
+  const keys = Object.keys(gameRTPData);
 
-    const providerKeys = Object.keys(gameRTPData);
-    if (providerKeys.length === 0) {
-        providerTitleEl.textContent = 'No providers available';
-        return;
-    }
+  keys.forEach((key, index) => {
+    const info = gameRTPData[key];
 
-    providerKeys.forEach((key, index) => {
-        const info = gameRTPData[key];
-        const displayName = info.displayName || key;
+    const div = document.createElement("div");
+    div.className = "provider-pill";
+    div.dataset.providerKey = key;
+    div.textContent = info.displayName || key;
 
-        const div = document.createElement('div');
-        div.className = 'provider-pill';
-        div.textContent = displayName;
-        div.dataset.providerKey = key;
+    if (index === 0) div.classList.add("active");
 
-        if (index === 0) {
-            div.classList.add('active');
-            currentProviderKey = key;
-        }
-
-        div.addEventListener('click', () => {
-            document.querySelectorAll('.provider-pill.active')
-                .forEach(el => el.classList.remove('active'));
-            div.classList.add('active');
-            selectProvider(key);
-        });
-
-        providerListEl.appendChild(div);
+    div.addEventListener("click", () => {
+      document.querySelectorAll(".provider-pill").forEach(p => p.classList.remove("active"));
+      div.classList.add("active");
+      selectProvider(key);
     });
 
-    selectProvider(currentProviderKey);
+    providerListEl.appendChild(div);
+  });
+
+  if (keys.length > 0) {
+    selectProvider(keys[0]);
+  }
 }
 
-// ====== SELECT PROVIDER ======
-function selectProvider(providerKey) {
-    if (!providerKey || !gameRTPData[providerKey]) return;
+// Selecting a provider
+function selectProvider(key) {
+  const info = gameRTPData[key];
+  if (!info) return;
 
-    const providerInfo = gameRTPData[providerKey];
-    const displayName = providerInfo.displayName || providerKey;
-    providerTitleEl.textContent = displayName;
+  providerTitleEl.textContent = info.displayName || key;
+  currentProviderKey = key;
+  currentGameList = info.data || [];
+  currentPage = 1;
+  totalPages = Math.ceil(currentGameList.length / ITEMS_PER_PAGE);
 
-    currentProviderKey = providerKey;
-    currentGameList = Array.isArray(providerInfo.data) ? providerInfo.data : [];
-    currentPage = 1;
-    totalPages = Math.max(1, Math.ceil(currentGameList.length / ITEMS_PER_PAGE));
-
-    renderGamePage();
+  renderGamePage();
 }
 
-// ====== RENDER GAME PAGE ======
+// Rendering game cards
 function renderGamePage() {
-    gamesGridEl.innerHTML = '';
+  gamesGridEl.innerHTML = "";
 
-    if (!currentGameList || currentGameList.length === 0) {
-        gamesGridEl.innerHTML = `
-            <div class="no-data" style="text-align:center;margin-top:20px;
-                color:#fff;text-shadow:0 0 4px #000;">
-                No games available.
-            </div>
-        `;
-        pageInfoEl.textContent = `Page 1 / 1`;
-        safeSendHeight();
-        return;
+  if (currentGameList.length === 0) {
+    gamesGridEl.innerHTML = `<div style="text-align:center;color:white;">No games available.</div>`;
+    pageInfoEl.textContent = "Page 1 / 1";
+    sendHeight();
+    return;
+  }
+
+  const start = (currentPage - 1) * ITEMS_PER_PAGE;
+  const end = start + ITEMS_PER_PAGE;
+  const slice = currentGameList.slice(start, end);
+
+  slice.forEach((g) => {
+    const name = g.gamertpdata?.gameName || "Unknown";
+    const img = g.gamertpdata?.gameImgURL || "";
+    const rtpNum = Number(g.gamertpnum) || 0;
+
+    const rtpClass =
+      rtpNum <= 40
+        ? "rtp-low"
+        : rtpNum <= 50
+        ? "rtp-mid"
+        : rtpNum <= 65
+        ? "rtp-high"
+        : "rtp-hot";
+
+    const card = `
+      <div class="game-card">
+        <div class="game-image-wrapper">
+          <img class="game-image" src="${img}">
+        </div>
+
+        <div class="game-title">${name}</div>
+
+        <div class="rtp-info">
+          <span>RTP</span><span>${rtpNum}%</span>
+        </div>
+
+        <div class="progress-container">
+          <div class="progress-bar ${rtpClass}" style="width:${rtpNum}%"></div>
+        </div>
+      </div>
+    `;
+
+    gamesGridEl.insertAdjacentHTML("beforeend", card);
+  });
+
+  pageInfoEl.textContent = `Page ${currentPage} / ${totalPages}`;
+
+  prevPageBtn.onclick = () => {
+    if (currentPage > 1) {
+      currentPage--;
+      renderGamePage();
     }
+  };
 
-    const start = (currentPage - 1) * ITEMS_PER_PAGE;
-    const end   = start + ITEMS_PER_PAGE;
-    const pageData = currentGameList.slice(start, end);
+  nextPageBtn.onclick = () => {
+    if (currentPage < totalPages) {
+      currentPage++;
+      renderGamePage();
+    }
+  };
 
-    pageData.forEach(game => {
-        const gameId   = game.gamertpid;
-        const meta     = game.gamertpdata || {};
-        const gameName = meta.gameName || 'Unknown Game';
-        const gameImg  = meta.gameImgURL || '';
-
-        const rtpNum   = parseInt(game.gamertpnum, 10) || 0;
-
-        let progressBarText;
-        if (rtpNum < 40) {
-            progressBarText = rtpNum + '%';
-        } else {
-            progressBarText = 'RTP: ' + rtpNum + '%';
-        }
-
-        let progressClass;
-        if (rtpNum <= 40) {
-            progressClass = 'rtp-low';
-        } else if (rtpNum <= 50) {
-            progressClass = 'rtp-mid';
-        } else if (rtpNum <= 65) {
-            progressClass = 'rtp-high';
-        } else {
-            progressClass = 'rtp-hot';
-        }
-
-        const card = document.createElement('div');
-        card.className = 'game-card';
-        card.dataset.gameId = gameId;
-
-        card.innerHTML = `
-            <div class="game-image-wrapper">
-                <img class="game-image" src="${gameImg}" alt="${gameName}">
-            </div>
-            <div class="game-title">${gameName}</div>
-            <div class="rtp-info">
-                <span>RTP</span>
-                <span>${rtpNum}%</span>
-            </div>
-            <div class="progress-container">
-                <div class="progress-bar ${progressClass}" style="width:${rtpNum}%;">
-                    ${progressBarText}
-                </div>
-            </div>
-        `;
-
-        gamesGridEl.appendChild(card);
-    });
-
-    pageInfoEl.textContent = `Page ${currentPage} / ${totalPages}`;
-
-    prevPageBtn.onclick = () => {
-        if (currentPage > 1) {
-            currentPage--;
-            renderGamePage();
-        }
-    };
-    nextPageBtn.onclick = () => {
-        if (currentPage < totalPages) {
-            currentPage++;
-            renderGamePage();
-        }
-    };
-
-    safeSendHeight();
+  sendHeight();
 }
 
-// ====== INIT ======
-document.addEventListener('DOMContentLoaded', loadRTPData);
+// INIT
+document.addEventListener("DOMContentLoaded", loadRTPData);
