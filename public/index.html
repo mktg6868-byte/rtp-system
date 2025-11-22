@@ -122,15 +122,20 @@
     </div>
     <script src="app.js"></script>
     <script>
-      function sendHeight() {
-        const height = document.body.scrollHeight;
+    function sendHeight() {
+        const height = document.documentElement.scrollHeight;
         window.parent.postMessage({
-          type: 'setIframeHeight',
-          height
-        }, '*');
-      }
-      new ResizeObserver(sendHeight).observe(document.body);
-      window.onload = sendHeight;
+            type: "setIframeHeight",
+            height: height
+        }, "*");
+    }
+    
+    window.addEventListener("load", sendHeight);
+    window.addEventListener("resize", sendHeight);
+    document.addEventListener("click", sendHeight);
+    document.addEventListener("scroll", sendHeight);
+    setInterval(sendHeight, 300);
     </script>
   </body>
 </html>
+
