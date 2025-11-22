@@ -1,141 +1,134 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
+<head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="stylesheet" href="style.css" />
     <title>Game RTP</title>
-  </head>
-  <body>
-    <div class="rtp-wrapper">
-      <div class="rtp-header">
+</head>
+
+<body>
+
+<div class="rtp-wrapper">
+
+    <!-- HEADER -->
+    <div class="rtp-header">
         <img id="rtpHeaderImg" src="" alt="RTP Header" />
         <div class="rtp-refresh-bar">
-          <div id="countdownBar"></div>
+            <div id="countdownBar"></div>
         </div>
-        <div class="refresh-text">Next update in: <span id="refreshTime">--</span>
-        </div>
-      </div>
-      <div class="provider-row-clean">
-        <div class="provider-scroll-clean" id="providerList"></div>
-      </div>
-      <div class="provider-title" id="selectedProviderName">Select Provider</div>
-      <!-- FIXED PAGINATION BAR -->
-      <div class="pagination bottom-pagination">
-        <button id="prevPage">Prev</button>
-        <span id="pageInfo">Page 1 / 1</span>
-        <button id="nextPage">Next</button>
-      </div>
-      <!-- GAME GRID WITH MOCK CARDS -->
-      <div class="games-grid" id="gamesGrid">
-        <div class="game-card">
-          <div class="game-image-wrapper">
-            <img class="game-image" src="https://static.gwvkyk.com/games/jili/77.png">
-          </div>
-          <div class="game-title">Aztec Gems</div>
-          <div class="game-sub">Pragmatic Play</div>
-          <div class="rtp-info">
-            <span>RTP</span>
-            <span>92%</span>
-          </div>
-          <div class="progress-container">
-            <div class="progress-bar rtp-hot" style="width: 92%"></div>
-          </div>
-        </div>
-        <div class="game-card">
-          <div class="game-image-wrapper">
-            <img class="game-image" src="https://static.gwvkyk.com/games/jili/49.png">
-          </div>
-          <div class="game-title">Gates of Olympus</div>
-          <div class="game-sub">Pragmatic Play</div>
-          <div class="rtp-info">
-            <span>RTP</span>
-            <span>58%</span>
-          </div>
-          <div class="progress-container">
-            <div class="progress-bar rtp-mid" style="width: 58%"></div>
-          </div>
-        </div>
-        <div class="game-card">
-          <div class="game-image-wrapper">
-            <img class="game-image" src="https://static.gwvkyk.com/games/jili/103.png">
-          </div>
-          <div class="game-title">Starlight Princess</div>
-          <div class="game-sub">Pragmatic Play</div>
-          <div class="rtp-info">
-            <span>RTP</span>
-            <span>48%</span>
-          </div>
-          <div class="progress-container">
-            <div class="progress-bar rtp-mid" style="width: 48%"></div>
-          </div>
-        </div>
-        <div class="game-card">
-          <div class="game-image-wrapper">
-            <img class="game-image" src="https://static.gwvkyk.com/games/jili/545.png">
-          </div>
-          <div class="game-title">Sweet Bonanza</div>
-          <div class="game-sub">Pragmatic Play</div>
-          <div class="rtp-info">
-            <span>RTP</span>
-            <span>32%</span>
-          </div>
-          <div class="progress-container">
-            <div class="progress-bar rtp-low" style="width: 32%"></div>
-          </div>
-        </div>
-        <div class="game-card">
-          <div class="game-image-wrapper">
-            <img class="game-image" src="https://static.gwvkyk.com/games/jili/541.png">
-          </div>
-          <div class="game-title">Sugar Rush</div>
-          <div class="game-sub">Pragmatic Play</div>
-          <div class="rtp-info">
-            <span>RTP</span>
-            <span>85%</span>
-          </div>
-          <div class="progress-container">
-            <div class="progress-bar rtp-high" style="width: 85%"></div>
-          </div>
-        </div>
-        <div class="game-card">
-          <div class="game-image-wrapper">
-            <img class="game-image" src="https://static.gwvkyk.com/games/jili/403.png">
-          </div>
-          <div class="game-title">Wild West Gold</div>
-          <div class="game-sub">Pragmatic Play</div>
-          <div class="rtp-info">
-            <span>RTP</span>
-            <span>67%</span>
-          </div>
-          <div class="progress-container">
-            <div class="progress-bar rtp-high" style="width: 67%"></div>
-          </div>
-        </div>
-      </div>
+        <div class="refresh-text">Next update in: <span id="refreshTime">--</span></div>
     </div>
-    <div class="pagination">
-      <button id="prevPage">Prev</button>
-      <span id="pageInfo">Page 1 / 1</span>
-      <button id="nextPage">Next</button>
-    </div>
-    </div>
-    <script src="app.js"></script>
-    <script>
-    function sendHeight() {
-        const height = document.documentElement.scrollHeight;
-        window.parent.postMessage({
-            type: "setIframeHeight",
-            height: height
-        }, "*");
-    }
-    
-    window.addEventListener("load", sendHeight);
-    window.addEventListener("resize", sendHeight);
-    document.addEventListener("click", sendHeight);
-    document.addEventListener("scroll", sendHeight);
-    setInterval(sendHeight, 300);
-    </script>
-  </body>
-</html>
 
+    <!-- PROVIDER SELECTOR -->
+    <div class="provider-section">
+        <div class="provider-scroll-clean" id="providerList"></div>
+
+        <!-- animated underline -->
+        <div class="provider-underline" id="providerUnderline"></div>
+    </div>
+
+    <!-- PROVIDER TITLE -->
+    <div class="provider-title" id="selectedProviderName">Select Provider</div>
+
+    <!-- PAGINATION -->
+    <div class="pagination-section">
+        <button id="prevPage" class="page-btn">← Prev</button>
+        <span id="pageInfo" class="page-info">Page 1 / 1</span>
+        <button id="nextPage" class="page-btn">Next →</button>
+    </div>
+
+    <!-- GAME GRID -->
+    <div class="games-grid" id="gamesGrid">
+        <!-- MOCK CARDS (DEV MODE ONLY) -->
+        <div class="dev-mock-card">
+            <div class="game-card">
+                <div class="game-image-wrapper">
+                    <img class="game-image" src="https://static.gwvkyk.com/games/jili/77.png">
+                </div>
+                <div class="game-title">Mock Game A</div>
+                <div class="game-sub">Provider</div>
+                <div class="rtp-info"><span>RTP</span><span>92%</span></div>
+                <div class="progress-container">
+                    <div class="progress-bar rtp-hot" style="width: 92%"></div>
+                </div>
+            </div>
+            <div class="game-card">
+                <div class="game-image-wrapper">
+                    <img class="game-image" src="https://static.gwvkyk.com/games/jili/49.png">
+                </div>
+                <div class="game-title">Mock Game A</div>
+                <div class="game-sub">Provider</div>
+                <div class="rtp-info"><span>RTP</span><span>92%</span></div>
+                <div class="progress-container">
+                    <div class="progress-bar rtp-hot" style="width: 92%"></div>
+                </div>
+            </div>
+            <div class="game-card">
+                <div class="game-image-wrapper">
+                    <img class="game-image" src="https://static.gwvkyk.com/games/jili/103.png">
+                </div>
+                <div class="game-title">Mock Game A</div>
+                <div class="game-sub">Provider</div>
+                <div class="rtp-info"><span>RTP</span><span>92%</span></div>
+                <div class="progress-container">
+                    <div class="progress-bar rtp-hot" style="width: 92%"></div>
+                </div>
+            </div>
+            <div class="game-card">
+                <div class="game-image-wrapper">
+                    <img class="game-image" src="https://static.gwvkyk.com/games/jili/545.png">
+                </div>
+                <div class="game-title">Mock Game A</div>
+                <div class="game-sub">Provider</div>
+                <div class="rtp-info"><span>RTP</span><span>92%</span></div>
+                <div class="progress-container">
+                    <div class="progress-bar rtp-hot" style="width: 92%"></div>
+                </div>
+            </div>
+            <div class="game-card">
+                <div class="game-image-wrapper">
+                    <img class="game-image" src="https://static.gwvkyk.com/games/jili/541.png">
+                </div>
+                <div class="game-title">Mock Game A</div>
+                <div class="game-sub">Provider</div>
+                <div class="rtp-info"><span>RTP</span><span>92%</span></div>
+                <div class="progress-container">
+                    <div class="progress-bar rtp-hot" style="width: 92%"></div>
+                </div>
+            </div>
+            <div class="game-card">
+                <div class="game-image-wrapper">
+                    <img class="game-image" src="https://static.gwvkyk.com/games/jili/403.png">
+                </div>
+                <div class="game-title">Mock Game A</div>
+                <div class="game-sub">Provider</div>
+                <div class="rtp-info"><span>RTP</span><span>92%</span></div>
+                <div class="progress-container">
+                    <div class="progress-bar rtp-hot" style="width: 92%"></div>
+                </div>
+            </div>                                                            
+        </div>
+        <!-- END MOCK -->
+    </div>
+
+</div>
+
+<script src="app.js"></script>
+
+<!-- HEIGHT SYNC (INSIDE IFRAME PAGE) -->
+<script>
+function sendHeight() {
+    const height = document.documentElement.scrollHeight;
+    window.parent.postMessage({ type: "setIframeHeight", height }, "*");
+}
+
+window.addEventListener("load", sendHeight);
+window.addEventListener("resize", sendHeight);
+document.addEventListener("click", sendHeight);
+document.addEventListener("scroll", sendHeight);
+setInterval(sendHeight, 300);
+</script>
+
+</body>
+</html>
